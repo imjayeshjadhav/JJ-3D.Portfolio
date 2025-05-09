@@ -145,44 +145,48 @@ const abilities = [
     },
   ];
   
-  const expCards = [
-    {
-      review: "Adrian brought creativity and technical expertise to the team, significantly improving our frontend performance. His work has been invaluable in delivering faster experiences.",
-      imgPath: "/images/exp1.png",
-      logoPath: "/images/logo1.png",
-      title: "Frontend Developer",
-      date: "January 2023 - Present",
-      responsibilities: [
-        "Developed and maintained user-facing features for the Hostinger website.",
-        "Collaborated closely with UI/UX designers to ensure seamless user experiences.",
-        "Optimized web applications for maximum speed and scalability.",
-      ],
-    },
-    {
-      review: "Adrian’s contributions to Docker's web applications have been outstanding. He approaches challenges with a problem-solving mindset.",
-      imgPath: "/images/exp2.png",
-      logoPath: "/images/logo2.png",
-      title: "Full Stack Developer",
-      date: "June 2020 - December 2023",
-      responsibilities: [
-        "Led the development of Docker's web applications, focusing on scalability.",
-        "Worked with backend engineers to integrate APIs seamlessly with the frontend.",
-        "Contributed to open-source projects that were used with the Docker ecosystem.",
-      ],
-    },
-    {
-      review: "Adrian’s work on Appwrite’s mobile app brought a high level of quality and efficiency. He delivered solutions that enhanced our mobile experience & meet our product goals.",
-      imgPath: "/images/exp3.png",
-      logoPath: "/images/logo3.png",
-      title: "React Native Developer",
-      date: "March 2019 - May 2020",
-      responsibilities: [
-        "Built cross-platform mobile apps using React Native, integrating with Appwrite's backend services.",
-        "Improved app performance and user experience through code optimization and testing.",
-        "Coordinated with the product team to implement features based on feedback.",
-      ],
-    },
-  ];
+const expCards = [
+  {
+    review:
+      "Showcased creativity and dedication while building academic projects that demonstrate a solid understanding of frontend and backend fundamentals.",
+    imgPath: "/images/exp1.png",
+    logoPath: "/images/logo1.png",
+    title: "Project Developer",
+    date: "September 2023 - Present",
+    responsibilities: [
+      "Developed multiple academic projects using technologies like HTML, CSS, JavaScript, and React.",
+      "Collaborated with teammates to plan features, design interfaces, and implement functionalities.",
+      "Focused on clean code, responsiveness, and real-world problem solving.",
+    ],
+  },
+  {
+    review:
+      "Contributed actively to college-level coding clubs and participated in various technical events, gaining hands-on experience and improving collaboration skills.",
+    imgPath: "/images/exp2.png",
+    logoPath: "/images/logo2.png",
+    title: "Tech Club Member",
+    date: "August 2022 - Present",
+    responsibilities: [
+      "Participated in hackathons and coding competitions organized by the club.",
+      "Helped organize workshops and peer-to-peer learning sessions on Git, Web Dev, and DSA.",
+      "Worked on mini-projects and coding challenges with fellow members.",
+    ],
+  },
+  {
+    review:
+      "Took initiative to build personal projects and expand technical knowledge beyond the curriculum through self-learning and experimentation.",
+    imgPath: "/images/exp3.png",
+    logoPath: "/images/logo3.png",
+    title: "Self-Learning & Projects",
+    date: "March 2022 - Present",
+    responsibilities: [
+      "Built personal projects using JavaScript, React, and Node.js to apply learned concepts.",
+      "Followed online courses and documentation to deepen understanding of full-stack development.",
+      "Explored Git, GitHub, and deployment tools to publish and manage code effectively.",
+    ],
+  },
+];
+
   
   const expLogos = [
     {
