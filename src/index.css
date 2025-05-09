@@ -110,7 +110,7 @@ section {
     }
 
     &.not-scrolled {
-      @apply md:top-10 top-0 bg-transparent;
+      @apply md:top-10 !top-3 bg-transparent;
     }
 
     .inner {
