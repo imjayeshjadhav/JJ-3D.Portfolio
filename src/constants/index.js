@@ -128,7 +128,7 @@ const abilities = [
       rotation: [0, -Math.PI / 2, 0],
     },
     {
-      name: "Competative Programmer",
+      name: "Competitive Programmer",
       modelPath: "/models/c.glb",
       scale: 0.08,
       rotation: [0, 0, 0],
