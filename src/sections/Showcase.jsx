@@ -55,22 +55,22 @@ const Showcase = () => {
                     <img src="/images/project1.png" alt="Ryde" />
                 </div>
                 <div className="text-content">
-                    <h2>On Demand Rides Lorem ipsum dolor sit amet consectetur.</h2>
-                    <p className="text-white-50 md:text-xl">Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam, quia!</p>
+                    <h2>AI Interview App – personal AI-powered interview coach!</h2>
+                    <p className="text-white-50 md:text-xl">Practice real-time interview questions, get instant feedback, and boost your confidence before the big day. Smart, fast, and tailored just for you.</p>
                 </div>
             </div>
             <div className="project-list-wrapper overflow-hidden">
                 <div className="project" ref={project2ref}>
                     <div className="image-wrapper bg-[#ffefdb]">
-                        <img src="/images/project2.png" alt="" />
+                        <img src="/images/project2.png"  alt="" />
                     </div>
-                    <h2>Lorem ipsum dolor sit.</h2>
+                    <h2>A modern travel agency website with an integrated admin panel</h2>
                 </div>
                 <div className="project" ref={project3ref}>
                     <div className="image-wrapper bg-[#ffe7eb]">
                         <img src="/images/project3.png" alt="yc" />
                     </div>
-                    <h2>Lorem ipsum dolor sit.</h2>
+                    <h2>Modern JavaScript project for seamless UX.</h2>
                 </div>
             </div>
         </div>

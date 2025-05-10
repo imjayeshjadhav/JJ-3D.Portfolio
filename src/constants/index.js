@@ -11,10 +11,6 @@ const navLinks = [
       name: "Skills",
       link: "#skills",
     },
-    {
-      name: "Testimonials",
-      link: "#testimonials",
-    },
   ];
   
   const words = [
@@ -120,9 +116,9 @@ const abilities = [
       rotation: [0, 0, 0],
     },
     {
-      name: "Python Developer",
-      modelPath: "/models/python-transformed.glb",
-      scale: 0.8,
+      name: "Java Developer",
+      modelPath: "/models/java.glb",
+      scale: 1.5,
       rotation: [0, 0, 0],
     },
     {
@@ -132,9 +128,9 @@ const abilities = [
       rotation: [0, -Math.PI / 2, 0],
     },
     {
-      name: "Interactive Developer",
-      modelPath: "/models/three.js-transformed.glb",
-      scale: 0.05,
+      name: "Competative Programmer",
+      modelPath: "/models/c.glb",
+      scale: 0.08,
       rotation: [0, 0, 0],
     },
     {
@@ -148,41 +144,42 @@ const abilities = [
 const expCards = [
   {
     review:
-      "Showcased creativity and dedication while building academic projects that demonstrate a solid understanding of frontend and backend fundamentals.",
+      "Demonstrated strong self-motivation by independently learning modern web technologies and deploying real-world projects with version control best practices.",
     imgPath: "/images/exp1.png",
     logoPath: "/images/logo1.png",
-    title: "Project Developer",
-    date: "September 2023 - Present",
+    title: "Self-Learning Web Projects",
+    date: "December 2024 - Present",
     responsibilities: [
-      "Developed multiple academic projects using technologies like HTML, CSS, JavaScript, and React.",
-      "Collaborated with teammates to plan features, design interfaces, and implement functionalities.",
-      "Focused on clean code, responsiveness, and real-world problem solving.",
+      "Created and deployed responsive web apps using React, Next.js and modern javascript technologies.",
+      "Integrated Appwrite, Gemini API, Vapi Voice AI, and Google Cloud Auth into projects.",
+      "Maintained a clean GitHub profile showcasing commits, issues, and deployed links.",
+    ],
+  },
+  {
+    review:
+      "Known for being punctual and dependable when it comes to academic projects, always delivering work on time with attention to both frontend and backend development.",
+    imgPath: "/images/exp2.png",
+    logoPath: "/images/logo2.png",
+    title: "Academic Projects",
+    date: "September 2024 - Present",
+    responsibilities: [
+      "Ensured all assigned deliverables were submitted well before deadlines.",
+      "Implemented academic projects using Java Swing for the frontend and MySQL for the backend, along with various other full-stack tools and frameworks.",
+      "Collaborated with peers on UI planning, backend logic, and project documentation.",
+      "Focused on writing clean, readable code and building responsive user interfaces.",
     ],
   },
   {
     review:
       "Contributed actively to college-level coding clubs and participated in various technical events, gaining hands-on experience and improving collaboration skills.",
-    imgPath: "/images/exp2.png",
-    logoPath: "/images/logo2.png",
-    title: "Tech Club Member",
-    date: "August 2022 - Present",
+    imgPath: "/images/exp3.png",
+    logoPath: "/images/logo3.png",
+    title: "Tech Club Member (Marketing Head)",
+    date: "August 2023 - Present",
     responsibilities: [
       "Participated in hackathons and coding competitions organized by the club.",
       "Helped organize workshops and peer-to-peer learning sessions on Git, Web Dev, and DSA.",
       "Worked on mini-projects and coding challenges with fellow members.",
-    ],
-  },
-  {
-    review:
-      "Took initiative to build personal projects and expand technical knowledge beyond the curriculum through self-learning and experimentation.",
-    imgPath: "/images/exp3.png",
-    logoPath: "/images/logo3.png",
-    title: "Self-Learning & Projects",
-    date: "March 2022 - Present",
-    responsibilities: [
-      "Built personal projects using JavaScript, React, and Node.js to apply learned concepts.",
-      "Followed online courses and documentation to deepen understanding of full-stack development.",
-      "Explored Git, GitHub, and deployment tools to publish and manage code effectively.",
     ],
   },
 ];
@@ -252,18 +249,22 @@ const expCards = [
     {
       name: "insta",
       imgPath: "/images/insta.png",
+      link: "instagram.com/jjayeshhz"
     },
     {
-      name: "fb",
+      name: "Github",
       imgPath: "/images/fb.png",
+      link:"github.com/imjayeshjadhav"
     },
     {
       name: "x",
       imgPath: "/images/x.png",
+      link:"x.com/jjayeshhz"
     },
     {
       name: "linkedin",
       imgPath: "/images/linkedin.png",
+      link :"/"
     },
   ];
   
