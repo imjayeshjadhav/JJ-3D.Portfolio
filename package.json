@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/fetch-github.mjs && node scripts/fetch-leetcode.mjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

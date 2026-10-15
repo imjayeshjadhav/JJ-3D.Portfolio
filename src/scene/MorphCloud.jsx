@@ -1,35 +1,46 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 
 import { projects } from "../constants";
-import store, { FORMATIONS, rectToWorld, worldPerPixel } from "./store";
-import { buildFormations, HERO_CLUSTERS, helixNodes } from "./formations";
+import store, { FORMATIONS, INTRO_SECONDS, rectToWorld, ringFromRect, worldPerPixel } from "./store";
+import { buildFormations, CONSTELLATION, HERO_CLUSTERS, helixNodes, PIPELINE_ANCHORS } from "./formations";
 import { createCloudMaterial } from "./cloudMaterial";
-import StackGraph from "./StackGraph";
 
 const ROOM_HEIGHT_UNITS = 13.26; // stage height that maps to room scale 1
 
 // How bright each formation rests. Shapes that sit behind body copy settle
 // dim so the text stays readable; every morph flares to full on the way.
 const RESTING_INTENSITY = {
+  intro: 1,
   hero: 1,
-  "work-underwriteai": 0.38,
-  "work-timetable": 0.38,
-  "work-threatlens": 0.38,
+  about: 0.85,
+  activity: 0.5,
+  "work-underwriteai": 0.32,
+  "work-timetable": 0.32,
+  "work-threatlens": 0.32,
   wins: 0.45,
   experience: 0.75,
-  stack: 1,
+  stack: 0.9,
   contact: 0.8,
+};
+
+// Labels that float over a formation while it is showing.
+const FORMATION_LABELS = {
+  about: Object.values(CONSTELLATION).map((c) => ({
+    text: c.text,
+    position: [c.position[0], c.position[1] + 0.3, c.position[2]],
+  })),
 };
 
 // Formations zig-zag across the page as you scroll: -1 left, 1 right.
 const SIDE = {
-  "work-underwriteai": -1,
-  "work-timetable": 1,
-  "work-threatlens": -1,
-  wins: 1,
+  about: -1, // y is lowered below so the title stays clear
+  "work-underwriteai": 1,
+  "work-timetable": -1,
+  "work-threatlens": 1,
+  wins: 0,
 };
 
 // An element's centre in world units, measured as if scrolled to the top.
@@ -55,14 +66,25 @@ const computeLayout = (width, height) => {
   const heroScale = hero ? (hero.rect.height * wpp) / ROOM_HEIGHT_UNITS : 1;
   const contact = centerOf("contact-stage", width, height);
 
+  // Stack: the orbit sits under the carousel where it pins (pin at the top).
+  const stackStage = document.getElementById("stack-stage");
+  const stackSection = document.querySelector("#stack .stack-pin"); // the element that pins
+  let ring = { x: 0, y: 0, radius: mobile ? 2 : 3.5 };
+  if (stackStage && stackSection) {
+    const r = stackStage.getBoundingClientRect();
+    const top = r.top - stackSection.getBoundingClientRect().top;
+    ring = ringFromRect({ left: r.left, top, width: r.width, height: r.height }, width, height);
+  }
+
   const offsets = {
     hero: heroCenter.map((v, i) => v - center[i]),
     experience: mobile ? [0, 0, 0] : [-halfW * 0.56, -1.9, 0],
-    // Leaves room on the right for the last layer's labels.
-    stack: mobile ? [0, 0, 0] : [side - 1.4, 0, 0],
     contact: contact && !mobile ? [contact.world.x, 0.2, 0] : [0, 0, 0],
+    activity: [0, 0, -2],
   };
   for (const [key, dir] of Object.entries(SIDE)) offsets[key] = [dir * side, 0, 0];
+  offsets.stack = [ring.x - center[0], ring.y - center[1], 0];
+  if (!mobile) offsets.about[1] = -0.7;
 
   return {
     mobile,
@@ -76,6 +98,7 @@ const computeLayout = (width, height) => {
     // The hero's light sprinkle reaches across to the left edge.
     leftSpan: mobile ? 0 : heroCenter[0] + halfW,
     halfHeight,
+    ringRadius: ring.radius,
     offsets,
   };
 };
@@ -90,12 +113,14 @@ const MorphCloud = () => {
   const { size, gl } = useThree();
   const group = useRef();
   const labelRefs = useRef([]);
-  const pair = useRef({ from: -1, to: -1 });
+  const pair = useRef({ from: null, to: null });
+  const intro = useRef(0);
   const shownMix = useRef(0);
   const anchors = useRef([]);
   const stage = useRef(null);
   const frame = useRef(0);
-  const [stackActive, setStackActive] = useState(false);
+  const labelGroups = useRef({});
+
 
   const count = useMemo(pointCount, []);
   const layout = useMemo(() => computeLayout(size.width, size.height), [size.width, size.height]);
@@ -121,7 +146,7 @@ const MorphCloud = () => {
 
   // New layout means new arrays: force the next frame to re-upload.
   useEffect(() => {
-    pair.current = { from: -1, to: -1 };
+    pair.current = { from: null, to: null };
   }, [formations]);
 
   const { offsets } = layout;
@@ -145,12 +170,24 @@ const MorphCloud = () => {
     });
     const zone = height * 0.45;
     const t = i + 1 < els.length ? THREE.MathUtils.clamp((line + zone - tops[i + 1]) / zone, 0, 1) : 0;
-    const fromKey = els[i]?.dataset.formation ?? "hero";
-    const toKey = els[i + 1]?.dataset.formation ?? fromKey;
-    const from = FORMATIONS.indexOf(fromKey);
-    const to = FORMATIONS.indexOf(toKey);
 
-    if (from !== pair.current.from || to !== pair.current.to) {
+    // Load sequence: converge from a wide shell onto the room. Scrolling
+    // early, or reduced motion, skips straight to the scroll-driven cloud.
+    if (!store.introDone) {
+      // Capped so a slow first frame (shader compile) can't skip the sequence.
+      // The clock starts when the loader hands over.
+      if (store.loaderDone) intro.current += Math.min(delta, 1 / 30);
+      if (reduced || window.scrollY > 40 || intro.current >= INTRO_SECONDS) store.introDone = true;
+    }
+    const inIntro = !store.introDone;
+    const introP = inIntro ? intro.current / INTRO_SECONDS : 1;
+    store.introProgress = 1 - Math.pow(1 - introP, 3);
+
+    const fromKey = inIntro ? "intro" : els[i]?.dataset.formation ?? "hero";
+    const toKey = inIntro ? "hero" : els[i + 1]?.dataset.formation ?? fromKey;
+    const from = FORMATIONS.indexOf(fromKey);
+
+    if (fromKey !== pair.current.from || toKey !== pair.current.to) {
       const a = formations[fromKey];
       const b = formations[toKey];
       geometry.attributes.aFrom.array.set(a.positions);
@@ -159,13 +196,16 @@ const MorphCloud = () => {
       geometry.attributes.aHueTo.array.set(b.hues);
       for (const name of ["aFrom", "aTo", "aHueFrom", "aHueTo"]) geometry.attributes[name].needsUpdate = true;
       // Moving forward the new pair starts at 0; moving back it starts at 1.
-      shownMix.current = pair.current.from === -1 ? t : from > pair.current.from ? 0 : 1;
-      pair.current = { from, to };
+      const prev = FORMATIONS.indexOf(pair.current.from);
+      shownMix.current = prev === -1 ? t : from > prev ? 0 : 1;
+      pair.current = { from: fromKey, to: toKey };
     }
 
     // Reduced motion: no scroll-scrubbed morph, just a quick settle.
     const target = reduced ? (t > 0.5 ? 1 : 0) : t;
-    shownMix.current = THREE.MathUtils.damp(shownMix.current, target, reduced ? 6 : 10, delta);
+    shownMix.current = inIntro
+      ? store.introProgress
+      : THREE.MathUtils.damp(shownMix.current, target, reduced ? 6 : 10, delta);
     const mix = shownMix.current;
     const weight = (key) => (fromKey === key ? 1 - mix : 0) + (toKey === key ? mix : 0);
 
@@ -182,7 +222,7 @@ const MorphCloud = () => {
     const wpp = worldPerPixel(height);
     u.uPointer.value.set((state.pointer.x * width * wpp) / 2, (state.pointer.y * height * wpp) / 2, 0);
     const finePointer = layout.finePointer && !layout.mobile && !reduced;
-    const repel = finePointer ? 1 - weight("stack") * 0.75 : 0;
+    const repel = finePointer ? 1 : 0;
     u.uRepel.value = THREE.MathUtils.damp(u.uRepel.value, repel, 4, delta);
 
     // While the hero shows, the cloud rides along with the room (so it
@@ -197,14 +237,20 @@ const MorphCloud = () => {
     g.position.y = layout.center[1] + ride;
     g.rotation.y = reduced ? 0 : Math.sin(state.clock.elapsedTime * 0.12) * 0.05;
 
-    // The Stack network turns about its own centre while its section is pinned.
-    store.stackSpin = reduced ? 0 : weight("stack") * (store.stackProgress - 0.5) * 1.1;
-    u.uSpin.value = store.stackSpin;
-    u.uSpinCenter.value.fromArray(offsets.stack);
 
-    // Experience: light the helix node for the role nearest the centre.
+    // Spot glow. Experience lights the helix node for the role nearest the
+    // centre; a hovered pipeline stage lights its part of the project shape.
     const expWeight = weight("experience");
-    if (expWeight > 0.01) {
+    const stageSpot = store.stageSpot;
+    const stageAnchor = stageSpot && PIPELINE_ANCHORS[stageSpot.key]?.[stageSpot.index];
+    const stageWeight = stageAnchor ? weight(stageSpot.key) : 0;
+    if (stageWeight > 0.01) {
+      const o = offsets[stageSpot.key];
+      const k = layout.radius;
+      spot.set(stageAnchor[0] * k + o[0], stageAnchor[1] * k + o[1], stageAnchor[2] * k + o[2]);
+      g.localToWorld(spot);
+      u.uSpot.value.lerp(spot, 1 - Math.exp(-10 * delta));
+    } else if (expWeight > 0.01) {
       let best = 0;
       let bestD = Infinity;
       document.querySelectorAll("[data-exp-index]").forEach((el, k) => {
@@ -222,10 +268,16 @@ const MorphCloud = () => {
       g.localToWorld(spot);
       u.uSpot.value.lerp(spot, 1 - Math.exp(-6 * delta));
     }
-    u.uSpotAmount.value = THREE.MathUtils.damp(u.uSpotAmount.value, expWeight, 5, delta);
+    u.uSpotAmount.value = THREE.MathUtils.damp(u.uSpotAmount.value, Math.max(expWeight, stageWeight * 1.4), 5, delta);
+
+    // Formation labels follow their formation in and out.
+    for (const [key, els] of Object.entries(labelGroups.current)) {
+      const opacity = inIntro ? 0 : THREE.MathUtils.clamp((weight(key) - 0.5) / 0.4, 0, 1);
+      els.forEach((el) => el && (el.style.opacity = opacity));
+    }
 
     // Hero cluster labels fade out as soon as the cloud starts to move.
-    const heroWeight = THREE.MathUtils.clamp((weight("hero") - 0.6) / 0.4, 0, 1);
+    const heroWeight = inIntro ? 0 : THREE.MathUtils.clamp((weight("hero") - 0.6) / 0.4, 0, 1);
     labelRefs.current.forEach((el) => {
       if (!el) return;
       el.style.opacity = heroWeight;
@@ -233,8 +285,6 @@ const MorphCloud = () => {
       el.tabIndex = heroWeight > 0.5 ? 0 : -1;
     });
 
-    const showStack = layout.finePointer && !layout.mobile && weight("stack") > 0.6;
-    if (showStack !== stackActive) setStackActive(showStack);
   });
 
   const goTo = (id) => {
@@ -275,7 +325,28 @@ const MorphCloud = () => {
         );
       })}
 
-      {stackActive && <StackGraph radius={layout.radius} center={offsets.stack} />}
+      {Object.entries(FORMATION_LABELS).map(([key, labels]) => {
+        const o = offsets[key];
+        const k = layout.radius;
+        return labels.map((label, i) => (
+          <Html
+            key={`${key}-${i}`}
+            position={[label.position[0] * k + o[0], label.position[1] * k + o[1], label.position[2] * k + o[2]]}
+            center
+            portal={{ current: document.getElementById("scene-overlay") }}
+            zIndexRange={[18, 0]}
+          >
+            <span
+              ref={(el) => ((labelGroups.current[key] ??= [])[i] = el)}
+              className="formation-label"
+              aria-hidden="true"
+            >
+              {label.text}
+            </span>
+          </Html>
+        ));
+      })}
+
     </group>
   );
 };

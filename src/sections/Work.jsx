@@ -4,8 +4,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 import { projects } from "../constants";
+import store from "../scene/store";
 import PipelineDiagram from "../components/PipelineDiagram";
 import TimetableVisual from "../components/TimetableVisual";
+import scrambleCount from "../utils/scrambleCount";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -18,25 +20,40 @@ const CaseStudy = ({ project, flip }) => (
   >
     <figure className={`order-2 lg:col-span-7 ${flip ? "lg:order-2" : "lg:order-1"}`}>
       <div className="[perspective:1400px]">
-        <div className="case-shot overflow-hidden rounded-xl border border-rule bg-night will-change-transform">
+        <div className="case-shot relative overflow-hidden rounded-xl border border-rule bg-night will-change-transform">
           {project.image ? (
-            <img
-              src={project.image}
-              alt={project.imageAlt}
-              width="1440"
-              height="900"
-              loading="lazy"
-              decoding="async"
-              className="block h-auto w-full"
-            />
+            <a
+              href={project.live}
+              target="_blank"
+              rel="noreferrer"
+              data-cursor="open"
+              aria-label={`Open the ${project.name} live site`}
+              className="block"
+            >
+              <img
+                src={project.image}
+                alt={project.imageAlt}
+                width="1440"
+                height="900"
+                loading="lazy"
+                decoding="async"
+                className="block h-auto w-full"
+              />
+              {/* Same image through the magma gradient map; fades out to reveal colour. */}
+              <img src={project.image} alt="" aria-hidden="true" loading="lazy" className="duotone absolute inset-0 size-full" />
+            </a>
           ) : (
             <TimetableVisual />
           )}
         </div>
       </div>
       <figcaption className="mt-6">
-        <p className="mb-3 text-sm text-dim">How it works</p>
-        <PipelineDiagram stages={project.pipeline} label={`${project.name} pipeline`} />
+        <p className="mb-3 text-sm text-dim">How it works. Point at a stage to see it in the model behind.</p>
+        <PipelineDiagram
+          stages={project.pipeline}
+          label={`${project.name} pipeline`}
+          formation={`work-${project.id}`}
+        />
       </figcaption>
     </figure>
 
@@ -52,6 +69,20 @@ const CaseStudy = ({ project, flip }) => (
       </h3>
       <p className="mt-5 text-lg text-lilac">{project.summary}</p>
 
+      <div className="mt-8 flex items-end gap-4 border-l-2 border-ember/70 pl-4">
+        <p
+          className="font-display text-7xl font-bold leading-[0.85] tracking-tight text-flame"
+          style={{ fontVariationSettings: '"wdth" 75' }}
+        >
+          <span className="sr-only">{project.metric.value}</span>
+          <span className="metric-figure" data-value={project.metric.value} aria-hidden="true">
+            {project.metric.value}
+          </span>
+        </p>
+        <p className="max-w-[22ch] pb-1 text-sm leading-snug text-ember">{project.metric.label}</p>
+      </div>
+      <p className="mt-4 text-lilac">{project.result}</p>
+
       <h4 className="mt-8 font-medium text-ember">The problem</h4>
       <p className="mt-2 text-dim">{project.problem}</p>
 
@@ -64,9 +95,6 @@ const CaseStudy = ({ project, flip }) => (
           </li>
         ))}
       </ul>
-
-      <h4 className="mt-6 font-medium text-ember">Result</h4>
-      <p className="mt-2 text-lilac">{project.result}</p>
 
       <ul className="mt-8 flex flex-wrap gap-2" aria-label="Tech stack">
         {project.stack.map((tech) => (
@@ -106,6 +134,16 @@ const Work = () => {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Screenshots lean with scroll speed and settle when scrolling stops.
+        const skews = gsap.utils.toArray(".case-shot").map((el) =>
+          gsap.quickTo(el, "skewY", { duration: 0.5, ease: "power3" })
+        );
+        const lean = () => {
+          const v = gsap.utils.clamp(-3, 3, store.velocity * 0.12);
+          skews.forEach((to) => to(v));
+        };
+        gsap.ticker.add(lean);
+
         gsap.utils.toArray(".case-study").forEach((study) => {
           // Screenshot tips up out of the page as it arrives.
           gsap.fromTo(
@@ -119,6 +157,17 @@ const Work = () => {
               scrollTrigger: { trigger: study, start: "top 95%", end: "top 35%", scrub: 0.6 },
             }
           );
+          // Colour arrives once the shot has settled near the top of the view.
+          gsap.fromTo(
+            study.querySelector(".case-shot"),
+            { "--color": 0 },
+            {
+              "--color": 1,
+              ease: "none",
+              scrollTrigger: { trigger: study.querySelector(".case-shot"), start: "top 55%", end: "top 20%", scrub: 0.6 },
+            }
+          );
+          study.querySelectorAll(".metric-figure").forEach((el) => scrambleCount(el));
           // Pipeline stages light up in order, like data moving through.
           gsap.from(study.querySelectorAll(".pipeline-stage"), {
             borderColor: "#3a2257",
@@ -129,6 +178,7 @@ const Work = () => {
             scrollTrigger: { trigger: study.querySelector("figcaption"), start: "top 85%", end: "top 45%", scrub: 0.6 },
           });
         });
+        return () => gsap.ticker.remove(lean);
       });
       return () => mm.revert();
     },
@@ -145,7 +195,7 @@ const Work = () => {
         </p>
         <div className="mt-16">
           {projects.map((project, i) => (
-            <CaseStudy key={project.id} project={project} flip={i % 2 === 0} />
+            <CaseStudy key={project.id} project={project} flip={i % 2 === 1} />
           ))}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { experience, skills } from "../constants";
+import { experience } from "../constants";
 
 /*
   Every formation is exactly `count` points plus a hue per point (0..1 along
@@ -267,7 +267,7 @@ const shield = (count, rand) =>
         o[0] += gaussian(rand) * 0.01;
         o[1] += gaussian(rand) * 0.01;
         o[2] = 0.28 * (1 - o[0] * o[0]);
-        o[3] = 0.95;
+        o[3] = 0.8; // bright, but below the hot-core glow so it never flares over text
       },
     },
     {
@@ -370,53 +370,31 @@ const helix = (count, rand) => {
   ]);
 };
 
-/* -------- Stack: a neural net, one layer per skill group ------------------ */
+/* -------- Stack: an orbit ring under the 3D icon carousel -------------- */
 
-const SHORT = {
-  "Hugging Face Transformers": "Hugging Face",
-  "NLP and embeddings": "NLP + embeddings",
-  "Data structures and algorithms": "DSA",
-  "Operating systems": "OS",
-  "Computer networks": "Networks",
-};
-
-export const stackGraph = (() => {
-  const rand = mulberry32(42);
-  const nodes = [];
-  skills.forEach(({ group, items }, layer) => {
-    const x = -1.25 + layer * (2.5 / (skills.length - 1));
-    const spacing = Math.min(0.17, 1.9 / Math.max(items.length - 1, 1));
-    items.forEach((item, j) => {
-      nodes.push({
-        label: SHORT[item] ?? item,
-        group,
-        layer,
-        position: [x, ((items.length - 1) / 2 - j) * spacing, 0.22 * Math.sin(j * 1.3 + layer)],
-      });
-    });
-  });
-  const edges = [];
-  for (let l = 0; l < skills.length - 1; l++) {
-    const from = nodes.map((n, i) => [n, i]).filter(([n]) => n.layer === l);
-    const to = nodes.map((n, i) => [n, i]).filter(([n]) => n.layer === l + 1);
-    for (const [, a] of from) {
-      const picks = new Set();
-      while (picks.size < Math.min(3, to.length)) picks.add(to[Math.floor(rand() * to.length)][1]);
-      for (const b of picks) edges.push([a, b]);
-    }
-  }
-  return { nodes, edges };
-})();
-
-const network = (count, rand) => {
-  const { nodes, edges } = stackGraph;
-  const segments = edges.map(([a, b]) => [nodes[a].position, nodes[b].position]);
-  return fill(count, rand, [
-    segmentPart(0.5, segments, (a) => 0.28 + 0.13 * ((a[0] + 1.25) / 0.625), 0.006),
-    blobPart(0.36, nodes.map((n) => n.position), 0.028, 0.95),
-    haze(1.9),
-  ]);
-};
+// Built in world units: ring.radius matches the icon ring StackRing draws.
+const orbit = (count, rand, ringRadius) =>
+  padHidden(
+    fill(Math.min(count, 3200), rand, [
+      {
+        // the track the icons travel along: a flattened ellipse, seen from above
+        weight: 0.7,
+        gen: (rand, o) => {
+          const a = rand() * Math.PI * 2;
+          const r = ringRadius * (1 + gaussian(rand) * 0.025);
+          o[0] = Math.sin(a) * r;
+          o[1] = -ringRadius * 0.34 + (1 - Math.cos(a)) * ringRadius * 0.1 + gaussian(rand) * 0.03;
+          o[2] = (Math.cos(a) - 1) * r * 0.6;
+          // brighter toward the front, where the featured tool stands
+          o[3] = 0.35 + 0.55 * ((Math.cos(a) + 1) / 2);
+        },
+      },
+      { ...haze(ringRadius * 1.1), weight: 0.3 },
+    ]),
+    count,
+    rand,
+    ringRadius * 1.3
+  );
 
 /* -------- Contact: orbit rings around the real computer model ----------- */
 
@@ -443,9 +421,63 @@ const halo = (count, rand) =>
     1.8
   );
 
+/* -------- About: a constellation, literally connecting the dots ---------- */
+
+export const CONSTELLATION = {
+  ai: { text: "Artificial Intelligence", position: [-0.6, 0.55, 0.1] },
+  fundamentals: { text: "Computer Fundamentals", position: [0.55, 0.35, -0.25] },
+  design: { text: "System Design", position: [-0.1, -0.65, 0.25] },
+};
+
+// Points spaced like beads along a line, so links read as dotted.
+const beadPart = (weight, links, hue, beads = 22) => ({
+  weight,
+  gen: (rand, o) => {
+    const [a, b] = links[Math.floor(rand() * links.length)];
+    const t = (Math.floor(rand() * beads) + 0.5) / beads;
+    o[0] = lerp(a[0], b[0], t) + gaussian(rand) * 0.006;
+    o[1] = lerp(a[1], b[1], t) + gaussian(rand) * 0.006;
+    o[2] = lerp(a[2], b[2], t) + gaussian(rand) * 0.006;
+    o[3] = hue;
+  },
+});
+
+const constellation = (count, rand) => {
+  const hubs = Object.values(CONSTELLATION).map((c) => c.position);
+  const sRand = mulberry32(99);
+  const satellites = Array.from({ length: 14 }, () => [
+    (sRand() * 2 - 1) * 1.15,
+    (sRand() * 2 - 1) * 1.05,
+    (sRand() * 2 - 1) * 0.4,
+  ]);
+  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  const nearest = (s) => hubs.reduce((best, h) => (dist(s, h) < dist(s, best) ? h : best));
+  return padHidden(
+    fill(Math.min(count, 5200), rand, [
+      blobPart(0.3, hubs, 0.13, (rand) => 0.85 + rand() * 0.15),
+      beadPart(0.24, [[hubs[0], hubs[1]], [hubs[1], hubs[2]], [hubs[2], hubs[0]]], 0.6, 26),
+      beadPart(0.14, satellites.map((s) => [s, nearest(s)]), 0.42, 12),
+      blobPart(0.12, satellites, 0.03, 0.78),
+      haze(1.6),
+    ]),
+    count,
+    rand,
+    1.8
+  );
+};
+
+/* -------- Pipeline stages → points in each project's formation ----------- */
+
+// Hovering stage i of a case study's pipeline lights this spot in the cloud.
+export const PIPELINE_ANCHORS = {
+  "work-underwriteai": [[0, 0.95, 0], [0, 0.62, 0], [0, 0.2, 0], [0, -0.92, 0], [0, -0.55, 0]],
+  "work-timetable": [[-0.9, 0.9, -0.62], [0, 0, -0.62], [0, 0, 0], [0, 0, 0.62], [0.9, -0.9, 0.62]],
+  "work-threatlens": [[0, -0.6, 0.3], [0, -0.3, 0.25], [0, 0.15, 0.28], [0, 0.6, 0.25], [0, 0.92, 0.2]],
+};
+
 /* ------------------------------------------------------------------------ */
 
-const transform = ({ positions, hues }, scale, offset = [0, 0, 0]) => {
+const transform =({ positions, hues }, scale, offset = [0, 0, 0]) => {
   for (let i = 0; i < positions.length; i += 3) {
     positions[i] = positions[i] * scale + offset[0];
     positions[i + 1] = positions[i + 1] * scale + offset[1];
@@ -462,14 +494,35 @@ export const buildFormations = (count, layout) => {
   const { radius, heroScale, heroSquash = 1, offsets, leftSpan, halfHeight } = layout;
   const heroShape = hero(count, mulberry32(2025), leftSpan / heroScale, halfHeight / heroScale);
   for (let i = 0; i < heroShape.positions.length; i += 3) heroShape.positions[i] *= heroSquash;
+  const heroPoints = transform(heroShape, heroScale, offsets.hero);
+
+  // Load-in start: the hero points flung out on a wide shell, same colours.
+  const introRand = mulberry32(7);
+  const introPositions = new Float32Array(heroPoints.positions.length);
+  for (let i = 0; i < introPositions.length; i += 3) {
+    const r = 16 + introRand() * 6;
+    const th = introRand() * Math.PI * 2;
+    const ph = Math.acos(2 * introRand() - 1);
+    introPositions[i] = r * Math.sin(ph) * Math.cos(th);
+    introPositions[i + 1] = r * Math.cos(ph);
+    introPositions[i + 2] = r * Math.sin(ph) * Math.sin(th) - 6;
+  }
+
   return {
-    hero: transform(heroShape, heroScale, offsets.hero),
+    intro: { positions: introPositions, hues: heroPoints.hues },
+    hero: heroPoints,
+    about: transform(constellation(count, mulberry32(10)), radius, offsets.about),
+    // Behind the GitHub bars: the constellation scatters into faint dust.
+    activity: transform(padHidden(fill(Math.min(count, 1800), mulberry32(19), [haze(2.4)]), count, mulberry32(20), 2.4), radius, offsets.activity),
     "work-underwriteai": transform(ensemble(count, mulberry32(11)), radius, offsets["work-underwriteai"]),
     "work-timetable": transform(lattice(count, mulberry32(12)), radius, offsets["work-timetable"]),
     "work-threatlens": transform(shield(count, mulberry32(13)), radius, offsets["work-threatlens"]),
     wins: transform(podium(count, mulberry32(14)), radius, offsets.wins),
     experience: transform(helix(count, mulberry32(15)), radius * 0.8, offsets.experience),
-    stack: transform(network(count, mulberry32(16)), radius, offsets.stack),
+    // Phones do not pin the Stack ring, so the orbit could not line up with it.
+    stack: layout.mobile
+      ? transform(padHidden(fill(Math.min(count, 1500), mulberry32(16), [haze(2)]), count, mulberry32(21), 2), radius, offsets.stack)
+      : transform(orbit(count, mulberry32(16), layout.ringRadius), 1, offsets.stack),
     contact: transform(halo(count, mulberry32(17)), radius, offsets.contact),
   };
 };

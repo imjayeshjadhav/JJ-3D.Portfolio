@@ -19,6 +19,8 @@ const useSmoothScroll = () => {
     if (mql.matches) return () => mql.removeEventListener("change", onChange);
 
     const lenis = new Lenis({ lerp: 0.1, anchors: { offset: -72 } });
+    store.lenis = lenis;
+    if (!store.loaderDone && document.documentElement.style.overflow === "hidden") lenis.stop();
     lenis.on("scroll", (l) => {
       store.velocity = l.velocity;
       ScrollTrigger.update();
@@ -47,6 +49,7 @@ const useSmoothScroll = () => {
       });
       gsap.ticker.remove(raf);
       lenis.destroy();
+      store.lenis = null;
       mql.removeEventListener("change", onChange);
     };
   }, []);

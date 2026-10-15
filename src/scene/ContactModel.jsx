@@ -5,6 +5,7 @@ import * as THREE from "three";
 
 import store, { rectToWorld } from "./store";
 import { normalize } from "./iconModels";
+import { applyEnvMap, useEnvMap } from "./envMap";
 
 const URL = "/models/computer-optimized-transformed.glb";
 
@@ -15,7 +16,9 @@ const ContactModel = () => {
   const turn = useRef();
   const stage = useRef(null);
   const { scene } = useGLTF(URL);
-  const model = useMemo(() => normalize(scene.clone(true)), [scene]);
+  const envMap = useEnvMap();
+  // Lit by the shared reflection map, so it needs no scene lights of its own.
+  const model = useMemo(() => normalize(applyEnvMap(scene.clone(true), envMap, 1.2)), [scene, envMap]);
 
   useFrame((state, delta) => {
     stage.current ??= document.getElementById("contact-stage");

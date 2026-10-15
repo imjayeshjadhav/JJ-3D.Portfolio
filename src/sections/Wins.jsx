@@ -1,11 +1,9 @@
 import { useRef } from "react";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 import { wins } from "../constants";
-
-gsap.registerPlugin(ScrollTrigger);
+import scrambleCount from "../utils/scrambleCount";
 
 const Wins = () => {
   const scope = useRef(null);
@@ -15,32 +13,7 @@ const Wins = () => {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap.utils.toArray(".rank-figure").forEach((el, i) => {
-          const final = el.dataset.rank;
-          const [, num = "", suffix = final] = final.match(/^(\d+)(.*)$/) ?? [];
-          const target = Number(num);
-          const state = { v: 0 };
-          gsap.to(state, {
-            v: target,
-            duration: 1.6,
-            delay: i * 0.12,
-            ease: "power3.out",
-            scrollTrigger: { trigger: el, start: "top 85%", once: true },
-            onStart: () => el.classList.add("is-counting"),
-            onUpdate() {
-              const p = this.progress();
-              const digits =
-                p < 0.55
-                  ? Array.from(num, () => Math.floor(Math.random() * 10)).join("")
-                  : String(Math.round(state.v));
-              el.textContent = digits + suffix;
-            },
-            onComplete: () => {
-              el.textContent = final;
-              el.classList.remove("is-counting");
-            },
-          });
-        });
+        gsap.utils.toArray(".rank-figure").forEach((el, i) => scrambleCount(el, { delay: i * 0.12 }));
       });
       return () => mm.revert();
     },
@@ -48,7 +21,7 @@ const Wins = () => {
   );
 
   return (
-    <section id="wins" ref={scope} data-formation="wins" className="section border-t border-rule/60">
+    <section id="wins" ref={scope} data-formation="wins" className="py-32 md:py-48">
       <div className="shell">
         <h2 className="section-title">Competitions and rankings</h2>
 
@@ -56,11 +29,11 @@ const Wins = () => {
           {wins.map((win) => (
             <li key={win.title} className="border-t border-rule pt-6">
               <p
-                className="font-display text-7xl font-bold leading-none tracking-tight text-flame tabular-nums"
+                className="font-display text-7xl font-bold lg:text-8xl leading-none tracking-tight text-flame tabular-nums"
                 style={{ fontVariationSettings: '"wdth" 75' }}
               >
                 <span className="sr-only">{win.rank}</span>
-                <span className="rank-figure" data-rank={win.rank} aria-hidden="true">
+                <span className="rank-figure" data-value={win.rank} aria-hidden="true">
                   {win.rank}
                 </span>
               </p>

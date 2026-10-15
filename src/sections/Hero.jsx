@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react";
 import { profile } from "../constants";
 import useMediaQuery from "../hooks/useMediaQuery";
 import useDragRotate from "../hooks/useDragRotate";
+import store from "../scene/store";
 
 const Hero = ({ webgl }) => {
   const scope = useRef(null);
@@ -17,10 +18,13 @@ const Hero = ({ webgl }) => {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        gsap
-          .timeline({ defaults: { ease: "power4.out" } })
+        // Waits for the loader to lift, then rises as the cloud lands on the room.
+        const intro = gsap
+          .timeline({ paused: !store.loaderDone, delay: 0.5, defaults: { ease: "power4.out" } })
           .from(".line > span", { yPercent: 110, duration: 1.2, stagger: 0.12 })
           .from(".hero-copy", { opacity: 0, y: 16, duration: 0.8, stagger: 0.08 }, "-=0.7");
+        const play = () => intro.restart(true); // true: keep the delay
+        window.addEventListener("scene:ready", play, { once: true });
 
         // Scrolling away, the name stretches wide and lifts off.
         gsap.to(".hero-name", {
@@ -30,6 +34,7 @@ const Hero = ({ webgl }) => {
           ease: "none",
           scrollTrigger: { trigger: scope.current, start: "top top", end: "bottom top", scrub: 0.4 },
         });
+        return () => window.removeEventListener("scene:ready", play);
       });
       return () => mm.revert();
     },
@@ -50,13 +55,13 @@ const Hero = ({ webgl }) => {
           </p>
 
           <p className="hero-copy mt-5 max-w-[46ch] text-dim">
-            Software development engineer intern at Capillary Technologies. Final-year computer
-            science at MIT Academy of Engineering, {profile.location}.
+            Software development engineer intern at Capillary Technologies, Bengaluru. Final-year
+            computer science at MIT Academy of Engineering.
           </p>
 
           <div className="hero-copy mt-9 flex flex-wrap gap-3">
-            <a href="#work" className="btn btn-solid">View work</a>
-            <a href={profile.resume} download className="btn btn-quiet">Download résumé</a>
+            <a href="#work" data-magnetic className="btn btn-solid">View work</a>
+            <a href={profile.resume} download data-magnetic className="btn btn-quiet">Download résumé</a>
           </div>
         </div>
       </div>
@@ -65,6 +70,7 @@ const Hero = ({ webgl }) => {
       <div
         id="hero-stage"
         ref={stage}
+        {...(webgl && { "data-cursor": "drag" })}
         {...(webgl && {
           tabIndex: 0,
           role: "img",

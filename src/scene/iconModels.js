@@ -11,36 +11,52 @@ import {
   siTensorflow,
 } from "simple-icons";
 
+// Palette metals, one per skill group, so the shelf reads as one set.
+// Hovering an icon warms it to its brand colour.
+const FINISH = {
+  ai: "#c4467f", // rose
+  language: "#fcf3b0", // flame
+  web: "#f7845b", // ember
+  tools: "#d9cde8", // lilac
+};
+
 // Six logos are real models from the original portfolio; the rest are
 // extruded from Simple Icons paths so every tool on the shelf is 3D.
 export const ICON_MODELS = {
-  react: { glb: "/models/react_logo-transformed.glb" },
-  node: { glb: "/models/node-transformed.glb", rotation: [0, -Math.PI / 2, 0] },
-  python: { glb: "/models/python-transformed.glb" },
-  java: { glb: "/models/java.glb" },
-  cpp: { glb: "/models/c.glb" },
-  git: { glb: "/models/git-svg-transformed.glb", rotation: [0, -Math.PI / 4, 0] },
-  pytorch: { svg: siPytorch },
-  tensorflow: { svg: siTensorflow },
-  huggingface: { svg: siHuggingface },
-  langchain: { svg: siLangchain },
-  fastapi: { svg: siFastapi },
-  mongodb: { svg: siMongodb },
-  docker: { svg: siDocker },
-  nextjs: { svg: siNextdotjs },
+  pytorch: { svg: siPytorch, finish: "ai" },
+  tensorflow: { svg: siTensorflow, finish: "ai" },
+  huggingface: { svg: siHuggingface, finish: "ai" },
+  langchain: { svg: siLangchain, finish: "ai", brand: "#7fc8a9" },
+  python: { glb: "/models/python-transformed.glb", finish: "language", brand: "#3776ab" },
+  java: { glb: "/models/java.glb", finish: "language", brand: "#e76f00" },
+  cpp: { glb: "/models/c.glb", finish: "language", brand: "#00599c" },
+  fastapi: { svg: siFastapi, finish: "web" },
+  react: { glb: "/models/react_logo-transformed.glb", finish: "web", brand: "#61dafb" },
+  nextjs: { svg: siNextdotjs, finish: "web", brand: "#ffffff" },
+  node: { glb: "/models/node-transformed.glb", finish: "web", brand: "#5fa04e", rotation: [0, -Math.PI / 2, 0] },
+  mongodb: { svg: siMongodb, finish: "tools" },
+  docker: { svg: siDocker, finish: "tools" },
+  git: { glb: "/models/git-svg-transformed.glb", finish: "tools", brand: "#f05032", rotation: [0, -Math.PI / 4, 0] },
 };
 
-const FLAME = new THREE.Color("#fcf3b0");
+export const finishColor = (model) => new THREE.Color(FINISH[model.finish]);
+export const brandColor = (model) => new THREE.Color(model.brand ?? `#${model.svg.hex}`);
 
-// Brand colour, unless it would vanish on the dark page (Next.js, LangChain).
-const iconColor = (hex) => {
-  const c = new THREE.Color(`#${hex}`);
-  const { r, g, b } = c;
-  return 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.12 ? FLAME.clone() : c;
-};
+export const createIconMaterial = (model, envMap) =>
+  new THREE.MeshStandardMaterial({
+    color: finishColor(model),
+    // Satin metal plus a soft self-glow, so icons stay bright on the dark
+    // page without scene lights (which would also wash out the hero room).
+    emissive: finishColor(model).multiplyScalar(0.28),
+    metalness: 0.45,
+    roughness: 0.35,
+    envMap,
+    envMapIntensity: 1.5,
+    transparent: true, // dims when the Stack filter excludes it
+  });
 
 // A 24×24 Simple Icons path, extruded and centred in a unit box.
-export const buildExtrudedIcon = (icon) => {
+export const buildExtrudedIcon = (icon, material) => {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="${icon.path}"/></svg>`;
   const shapes = new SVGLoader().parse(svg).paths.flatMap((p) => SVGLoader.createShapes(p));
   const geometry = new THREE.ExtrudeGeometry(shapes, {
@@ -54,12 +70,15 @@ export const buildExtrudedIcon = (icon) => {
   geometry.center();
   geometry.rotateX(Math.PI); // SVG y points down
   geometry.scale(1 / 24, 1 / 24, 1 / 24);
-  const material = new THREE.MeshStandardMaterial({
-    color: iconColor(icon.hex),
-    metalness: 0.35,
-    roughness: 0.32,
-  });
   return new THREE.Mesh(geometry, material);
+};
+
+// Give every mesh in a loaded model the same palette material.
+export const paintModel = (object, material) => {
+  object.traverse((o) => {
+    if (o.isMesh) o.material = material;
+  });
+  return object;
 };
 
 // Centre any object and scale it so its largest side is 1.

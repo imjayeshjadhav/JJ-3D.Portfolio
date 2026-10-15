@@ -1,12 +1,30 @@
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { PerformanceMonitor } from "@react-three/drei";
+import { PerformanceMonitor, useProgress } from "@react-three/drei";
 
-import { CAMERA } from "./store";
+import store, { CAMERA } from "./store";
 import HeroRoom from "./HeroRoom";
 import MorphCloud from "./MorphCloud";
-import StackIcons from "./StackIcons";
+import StackRing from "./StackRing";
 import ContactModel from "./ContactModel";
+import ActivityBars from "./ActivityBars";
+
+// Feeds the DOM loader without pulling drei into the main bundle.
+const LoadProgress = () => {
+  const { progress } = useProgress();
+  useEffect(() => {
+    store.loadProgress = progress;
+  }, [progress]);
+  return null;
+};
+
+// Mounts only after the room and cloud have finished suspending.
+const Ready = () => {
+  useEffect(() => {
+    store.sceneReady = true;
+  }, []);
+  return null;
+};
 
 // The page's only WebGL context: fixed behind all content. Pointer events
 // come from #root, so the canvas never blocks clicks or scrolling.
@@ -24,20 +42,20 @@ const SceneCanvas = () => {
       >
         <color attach="background" args={["#120a24"]} />
         <ambientLight intensity={0.35} color="#3a2257" />
-        {/* Soft key for the 3D icons and the contact desk. */}
-        <hemisphereLight args={["#fcf3b0", "#3a2257", 0.9]} />
-        <directionalLight position={[4, 6, 8]} intensity={1.6} color="#fff4e6" />
+        <LoadProgress />
         <PerformanceMonitor onIncline={() => setDpr(1.75)} onDecline={() => setDpr(1)} />
         <Suspense fallback={null}>
           <HeroRoom />
           <MorphCloud />
+          <Ready />
         </Suspense>
         <Suspense fallback={null}>
-          <StackIcons />
+          <StackRing />
         </Suspense>
         <Suspense fallback={null}>
           <ContactModel />
         </Suspense>
+        <ActivityBars />
       </Canvas>
     </div>
   );

@@ -29,7 +29,9 @@ const HeroRoom = () => {
     const w = rectToWorld(r, width, height);
     // 0 at rest, 1 once the stage has scrolled fully out of view.
     const out = THREE.MathUtils.clamp(-r.top / r.height, 0, 1);
-    const scale = ((r.height * w.wpp) / ROOM_HEIGHT_UNITS) * (1 - out * 0.3);
+    // On load the room grows in and turns to rest while the cloud converges.
+    const settle = store.introProgress;
+    const scale = ((r.height * w.wpp) / ROOM_HEIGHT_UNITS) * (1 - out * 0.3) * (0.85 + 0.15 * settle);
     g.position.set(w.x, w.y, 0);
     g.scale.setScalar(scale);
 
@@ -39,7 +41,7 @@ const HeroRoom = () => {
     const t = tilt.current;
     const parallaxY = reduced ? 0 : state.pointer.x * 0.12;
     const parallaxX = reduced ? 0 : -state.pointer.y * 0.05;
-    t.rotation.y = THREE.MathUtils.damp(t.rotation.y, drag.y + parallaxY, 6, delta);
+    t.rotation.y = THREE.MathUtils.damp(t.rotation.y, drag.y + parallaxY - (1 - settle) * 0.5, 6, delta);
     t.rotation.x = THREE.MathUtils.damp(t.rotation.x, drag.x + parallaxX + out * 0.5, 6, delta);
   });
 

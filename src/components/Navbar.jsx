@@ -1,15 +1,49 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { navLinks, profile } from "../constants";
+
+const PALETTE_KEY = /Mac|iPhone|iPad/.test(navigator.userAgent) ? "⌘K" : "Ctrl K";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(null);
+  const progress = useRef(null);
 
+  // Scrolled state, plus a progress line that fills along the magma ramp.
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    let frame = 0;
+    const onScroll = () => {
+      setScrolled(window.scrollY > 12);
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        if (progress.current) progress.current.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
+      });
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  // Mark the section currently crossing the middle of the screen.
+  useEffect(() => {
+    const targets = navLinks.map(({ link }) => document.querySelector(link)).filter(Boolean);
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => e.isIntersecting && setActive(`#${e.target.id}`));
+      },
+      { rootMargin: "-45% 0px -50% 0px" }
+    );
+    targets.forEach((t) => io.observe(t));
+    const onTop = () => window.scrollY < window.innerHeight * 0.4 && setActive(null);
+    window.addEventListener("scroll", onTop, { passive: true });
+    return () => {
+      io.disconnect();
+      window.removeEventListener("scroll", onTop);
+    };
   }, []);
 
   useEffect(() => {
@@ -43,15 +77,35 @@ const Navbar = () => {
         <ul className="hidden items-center gap-8 lg:flex">
           {navLinks.map(({ name, link }) => (
             <li key={name}>
-              <a href={link} className="text-[0.95rem] text-dim transition-colors hover:text-flame">
+              <a
+                href={link}
+                aria-current={active === link ? "true" : undefined}
+                className={`relative text-[0.95rem] transition-colors hover:text-flame ${
+                  active === link ? "text-flame" : "text-dim"
+                }`}
+              >
                 {name}
+                <span
+                  aria-hidden="true"
+                  className={`absolute -bottom-2 left-1/2 size-1 -translate-x-1/2 rounded-full bg-ember transition-opacity ${
+                    active === link ? "opacity-100" : "opacity-0"
+                  }`}
+                />
               </a>
             </li>
           ))}
         </ul>
 
         <div className="flex items-center gap-3">
-          <a href={profile.resume} download className="btn btn-quiet hidden !py-2 sm:inline-flex">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("palette:open"))}
+            className="hidden min-h-9 items-center gap-2 rounded-full border border-rule px-3 text-sm text-dim transition-colors hover:border-ember hover:text-flame xl:inline-flex"
+          >
+            Jump to
+            <kbd className="rounded border border-rule px-1.5 font-sans text-xs">{PALETTE_KEY}</kbd>
+          </button>
+          <a href={profile.resume} download data-magnetic className="btn btn-quiet hidden !py-2 sm:inline-flex">
             Download résumé
           </a>
           <button
@@ -72,6 +126,12 @@ const Navbar = () => {
           </button>
         </div>
       </nav>
+      <div
+        ref={progress}
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-[-1px] h-[2px] origin-left"
+        style={{ background: "var(--ramp)", transform: "scaleX(0)" }}
+      />
 
       {open && (
         <div id="mobile-menu" className="h-[calc(100dvh-var(--nav-h))] border-t border-rule/70 lg:hidden">
@@ -81,7 +141,8 @@ const Navbar = () => {
                 <a
                   href={link}
                   onClick={() => setOpen(false)}
-                  className="block py-5 font-display text-3xl text-flame"
+                  aria-current={active === link ? "true" : undefined}
+                  className={`block py-5 font-display text-3xl ${active === link ? "text-ember" : "text-flame"}`}
                 >
                   {name}
                 </a>

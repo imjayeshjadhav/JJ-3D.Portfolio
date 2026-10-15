@@ -20,8 +20,6 @@ const vertexShader = /* glsl */ `
   uniform vec3 uPointer;
   uniform vec3 uSpot;
   uniform float uSpotAmount;
-  uniform float uSpin;
-  uniform vec3 uSpinCenter;
 
   varying vec3 vColor;
   varying float vAlpha;
@@ -49,11 +47,6 @@ const vertexShader = /* glsl */ `
     vec3 dir = normalize(vec3(sin(aSeed * 91.0), cos(aSeed * 57.0), sin(aSeed * 23.0)));
     pos += dir * sin(m * 3.14159) * (0.9 + aSeed * 1.4);
 
-    // The Stack network turns about its own centre while the section is pinned.
-    vec3 sp = pos - uSpinCenter;
-    float cs = cos(uSpin), sn = sin(uSpin);
-    pos = uSpinCenter + vec3(cs * sp.x + sn * sp.z, sp.y, -sn * sp.x + cs * sp.z);
-
     // Idle drift, plus scatter that grows with scroll speed.
     float drift = 0.05 + min(abs(uVelocity), 60.0) * 0.004;
     pos += drift * vec3(
@@ -77,9 +70,13 @@ const vertexShader = /* glsl */ `
     float hue = mix(max(aHueFrom, 0.0), max(aHueTo, 0.0), m);
     float spot = uSpotAmount * exp(-pow(distance(world.xyz, uSpot), 2.0) * 1.6);
     vColor = ramp(hue + spot * 0.5);
-    vAlpha = (0.55 + 0.45 * hue + spot * 0.5) * visible;
+    // Depth cue: points further back are smaller and dimmer.
+    float depth = smoothstep(28.0, 10.0, -mv.z);
+    vAlpha = (0.55 + 0.45 * hue + spot * 0.5) * visible * (0.35 + 0.65 * depth);
 
-    float size = uSize * (0.6 + aSeed * 0.8) * (1.0 + spot * 0.6);
+    // Hot points (dense cores) get a little larger, so their glow reads.
+    float hot = smoothstep(0.82, 0.95, hue);
+    float size = uSize * (0.6 + aSeed * 0.8) * (1.0 + spot * 0.6) * (0.55 + 0.6 * depth) * (1.0 + hot * 0.35);
     gl_PointSize = size * uPixelRatio * (uViewportHeight / 900.0) * (16.0 / -mv.z);
   }
 `;
@@ -90,8 +87,11 @@ const fragmentShader = /* glsl */ `
   varying float vAlpha;
 
   void main() {
+    // A tight core plus a soft halo: a bloom-like glow without a post pass.
     float d = length(gl_PointCoord - 0.5);
-    float a = smoothstep(0.5, 0.05, d);
+    float core = exp(-d * d * 70.0);
+    float halo = exp(-d * d * 14.0) * 0.5;
+    float a = (core + halo) * smoothstep(0.5, 0.42, d);
     if (a * vAlpha < 0.01) discard;
     gl_FragColor = vec4(vColor, a * vAlpha * uOpacity);
   }
@@ -107,7 +107,7 @@ export const createCloudMaterial = () =>
     uniforms: {
       uMix: { value: 0 },
       uTime: { value: 0 },
-      uSize: { value: 4.2 },
+      uSize: { value: 5 },
       uPixelRatio: { value: 1 },
       uViewportHeight: { value: 900 },
       uVelocity: { value: 0 },
@@ -115,8 +115,6 @@ export const createCloudMaterial = () =>
       uPointer: { value: new THREE.Vector3(999, 999, 0) },
       uSpot: { value: new THREE.Vector3(999, 999, 0) },
       uSpotAmount: { value: 0 },
-      uSpin: { value: 0 },
-      uSpinCenter: { value: new THREE.Vector3() },
       uOpacity: { value: 1 },
     },
   });

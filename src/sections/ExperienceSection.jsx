@@ -81,7 +81,7 @@ const ExperienceSection = () => {
       id="experience"
       ref={scope}
       data-formation="experience"
-      className="section border-t border-rule/60"
+      className="border-t border-rule/60 pb-24 pt-20 md:pb-36 md:pt-28"
     >
       <div className="shell grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">

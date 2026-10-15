@@ -153,47 +153,6 @@
   @apply mr-2 inline-block size-2 rounded-full align-middle;
 }
 
-/* Stack: the 3D network replaces the list on desktop pointers; the list
-   stays in the accessibility tree everywhere. */
-.stack-label {
-  display: inline-block;
-  transform: translate(10px, -50%);
-  white-space: nowrap;
-  font-size: 0.78rem;
-  color: var(--color-lilac);
-  text-shadow: 0 0 8px var(--color-night), 0 0 2px var(--color-night);
-  transition: color 200ms ease, opacity 200ms ease;
-}
-.stack-label.is-hovered {
-  color: var(--color-flame);
-  font-weight: 600;
-}
-.stack-label.is-linked {
-  color: var(--color-ember);
-}
-.stack-label.is-dimmed {
-  opacity: 0.3;
-}
-
-@media (min-width: 768px) and (pointer: fine) {
-  html:not(.no-webgl) .stack-list {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-}
-@media not ((min-width: 768px) and (pointer: fine)) {
-  .stack-hint {
-    display: none;
-  }
-}
-.no-webgl .stack-hint {
-  display: none;
-}
-
 /* Copy that can sit over the cloud gets a soft halo in the page colour. */
 .case-study p,
 .case-study li,
@@ -216,4 +175,126 @@
 }
 html.no-webgl .drag-stage {
   cursor: auto;
+}
+
+/* Project screenshots: magma duotone until the shot settles (Work.jsx
+   scrubs --color 0 → 1) or the visitor hovers or focuses into the study. */
+.case-shot {
+  --color: 0;
+  --hover: 0;
+}
+.case-shot .duotone {
+  filter: url(#magma-duotone);
+  opacity: calc(1 - max(var(--color), var(--hover)));
+  transition: opacity 400ms ease;
+  pointer-events: none;
+}
+.case-shot:hover,
+.case-study:focus-within .case-shot {
+  --hover: 1;
+}
+
+/* Labels the cloud wears in some formations (About's constellation). */
+.formation-label {
+  display: inline-block;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-flame);
+  opacity: 0;
+  text-shadow: 0 0 12px var(--color-night), 0 0 3px var(--color-night);
+  transition: opacity 200ms linear;
+}
+
+.activity-tooltip {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 30;
+  pointer-events: none;
+  white-space: nowrap;
+  border: 1px solid var(--color-rule);
+  border-radius: 6px;
+  background: var(--color-plum);
+  padding: 4px 8px;
+  font-size: 0.78rem;
+  color: var(--color-lilac);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.activity-tooltip[data-show="true"] {
+  opacity: 1;
+}
+
+/* Contextual cursor (fine pointers, motion allowed). */
+html.has-cursor,
+html.has-cursor * {
+  cursor: none !important;
+}
+html.has-cursor input,
+html.has-cursor textarea,
+html.has-cursor select {
+  cursor: text !important;
+}
+.cursor-layer {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  opacity: 0;
+  transition: opacity 200ms ease;
+}
+html.has-cursor[data-cursor-visible="true"] .cursor-layer {
+  opacity: 1;
+}
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 999px;
+  background: var(--color-flame);
+}
+.cursor-ring {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  margin: -15px 0 0 -15px;
+  border: 1px solid color-mix(in srgb, var(--color-flame) 55%, transparent);
+  border-radius: 999px;
+  transition: width 220ms var(--ease-out-soft), height 220ms var(--ease-out-soft), margin 220ms var(--ease-out-soft),
+    background-color 220ms ease, border-color 220ms ease, opacity 150ms ease;
+}
+.cursor-ring[data-state="link"] {
+  width: 46px;
+  height: 46px;
+  margin: -23px 0 0 -23px;
+  border-color: var(--color-ember);
+}
+.cursor-ring[data-state="label"] {
+  width: 68px;
+  height: 68px;
+  margin: -34px 0 0 -34px;
+  border-color: transparent;
+  background: var(--color-flame);
+}
+.cursor-ring[data-state="hidden"] {
+  opacity: 0;
+}
+.cursor-ring.is-pressed {
+  transform-origin: center;
+  scale: 0.85;
+}
+.cursor-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-night);
+  letter-spacing: 0.01em;
 }

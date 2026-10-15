@@ -3,6 +3,7 @@ import emailjs from "@emailjs/browser";
 
 import { profile } from "../constants";
 import useDragRotate from "../hooks/useDragRotate";
+import { onEmailClick } from "../utils/copyEmail";
 
 
 const Contact = () => {
@@ -44,7 +45,7 @@ const Contact = () => {
           <p className="section-lede">
             Hiring for an AI or full-stack role, or building something that needs both? Send a
             message, or email{" "}
-            <a href={`mailto:${profile.email}`} className="text-link text-lilac">
+            <a href={`mailto:${profile.email}`} onClick={onEmailClick} data-cursor="copy" className="text-link text-lilac">
               {profile.email}
             </a>
             .
@@ -65,7 +66,7 @@ const Contact = () => {
             </div>
 
             <div className="flex flex-wrap items-center gap-4">
-              <button type="submit" disabled={status === "sending"} className="btn btn-solid disabled:opacity-60">
+              <button type="submit" data-magnetic disabled={status === "sending"} className="btn btn-solid disabled:opacity-60">
                 {status === "sending" ? "Sending…" : "Send message"}
               </button>
               <p role="status" aria-live="polite" className="text-sm">
@@ -84,6 +85,7 @@ const Contact = () => {
         <div
           id="contact-stage"
           ref={stage}
+          data-cursor="drag"
           tabIndex={0}
           role="img"
           aria-label="3D desk with a retro computer. Drag, or use the arrow keys, to turn it."
