@@ -26,6 +26,30 @@ const RESTING_INTENSITY = {
   contact: 0.8,
 };
 
+// Phones have no side column: these shapes sit right behind the text, so
+// they rest as a faint texture instead.
+const MOBILE_INTENSITY = {
+  about: 0.4,
+  activity: 0.35,
+  "work-underwriteai": 0.3,
+  "work-timetable": 0.3,
+  "work-threatlens": 0.3,
+  wins: 0.35,
+  experience: 0.45,
+};
+
+// When each shape morphs in: [start, end] as the section's top edge moves
+// from start to end (fractions of the viewport height, 1 = bottom edge).
+// Case studies wait until they are well on screen, so the shape forms
+// behind the text you are about to read rather than ahead of it.
+const MORPH_WINDOW = {
+  default: [1, 0.55],
+  about: [0.8, 0.35],
+  "work-underwriteai": [0.7, 0.28],
+  "work-timetable": [0.7, 0.28],
+  "work-threatlens": [0.7, 0.28],
+};
+
 // Labels that float over a formation while it is showing.
 const FORMATION_LABELS = {
   about: Object.values(CONSTELLATION).map((c) => ({
@@ -162,14 +186,17 @@ const MorphCloud = () => {
       anchors.current = [...document.querySelectorAll("[data-formation]")];
     }
     const els = anchors.current;
-    const line = height * 0.55;
     const tops = els.map((el) => el.getBoundingClientRect().top);
+    const windowOf = (el) => MORPH_WINDOW[el?.dataset.formation] ?? MORPH_WINDOW.default;
     let i = 0;
     tops.forEach((top, k) => {
-      if (top <= line) i = k;
+      if (top <= windowOf(els[k])[1] * height) i = k;
     });
-    const zone = height * 0.45;
-    const t = i + 1 < els.length ? THREE.MathUtils.clamp((line + zone - tops[i + 1]) / zone, 0, 1) : 0;
+    let t = 0;
+    if (i + 1 < els.length) {
+      const [start, end] = windowOf(els[i + 1]);
+      t = THREE.MathUtils.clamp((start * height - tops[i + 1]) / ((start - end) * height), 0, 1);
+    }
 
     // Load sequence: converge from a wide shell onto the room. Scrolling
     // early, or reduced motion, skips straight to the scroll-driven cloud.
@@ -214,7 +241,8 @@ const MorphCloud = () => {
     u.uPixelRatio.value = gl.getPixelRatio();
     u.uViewportHeight.value = height;
     u.uVelocity.value = reduced ? 0 : THREE.MathUtils.damp(u.uVelocity.value, store.velocity, 4, delta);
-    const rest = THREE.MathUtils.lerp(RESTING_INTENSITY[fromKey], RESTING_INTENSITY[toKey], mix);
+    const restOf = (key) => (layout.mobile ? MOBILE_INTENSITY[key] : undefined) ?? RESTING_INTENSITY[key];
+    const rest = THREE.MathUtils.lerp(restOf(fromKey), restOf(toKey), mix);
     const flare = Math.sin(mix * Math.PI) * 0.5;
     u.uOpacity.value = Math.min(1, rest + flare) * (layout.mobile ? 0.55 : 1);
 
@@ -325,7 +353,8 @@ const MorphCloud = () => {
         );
       })}
 
-      {Object.entries(FORMATION_LABELS).map(([key, labels]) => {
+      {/* On phones these labels would land on top of the section text. */}
+      {!layout.mobile && Object.entries(FORMATION_LABELS).map(([key, labels]) => {
         const o = offsets[key];
         const k = layout.radius;
         return labels.map((label, i) => (
