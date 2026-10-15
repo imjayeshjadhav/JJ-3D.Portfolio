@@ -1,283 +1,193 @@
+// All copy here is sourced from the résumé and the GitHub profile.
+
+const profile = {
+  name: "Jayesh Jadhav",
+  email: "14jayeshjadhav@gmail.com",
+  location: "Pune, India",
+  resume: "/Jayesh_Jadhav_Resume.pdf",
+};
+
 const navLinks = [
-    {
-      name: "Work",
-      link: "#work",
-    },
-    {
-      name: "Involvements",
-      link: "#experience",
-    },
-    {
-      name: "Skills",
-      link: "#skills",
-    },
-  ];
-  
-  const words = [
-    { text: "Ideas", imgPath: "/images/ideas.svg" },
-    { text: "Concepts", imgPath: "/images/concepts.svg" },
-    { text: "Designs", imgPath: "/images/designs.svg" },
-    { text: "Code", imgPath: "/images/code.svg" },
-    { text: "Ideas", imgPath: "/images/ideas.svg" },
-    { text: "Concepts", imgPath: "/images/concepts.svg" },
-    { text: "Designs", imgPath: "/images/designs.svg" },
-    { text: "Code", imgPath: "/images/code.svg" },
-  ];
-  
-  const counterItems = [
-    { value: 10, suffix: "+", label: "Projects Completed" },
-    { value: 20, suffix: "+", label: "Technologies Learned" },
-    { value: 160, suffix: "+", label: "GitHub Contributions" },
-    { value: 95, suffix: "%", label: "Learning Consistency" },
-  ];  
-  
-  const logoIconsList = [
-    {
-      imgPath: "/images/logos/company-logo-1.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-2.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-3.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-4.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-5.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-6.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-7.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-8.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-9.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-10.png",
-    },
-    {
-      imgPath: "/images/logos/company-logo-11.png",
-    },
-  ];
-  
-const abilities = [
-  {
-    imgPath: "/images/seo.png",
-    title: "Quick Learner",
-    desc: "Adapting swiftly to new technologies and concepts with a strong desire to grow.",
-  },
-  {
-    imgPath: "/images/chat.png",
-    title: "Collaborative Team Player",
-    desc: "Communicating effectively and working well in team-based academic and project settings.",
-  },
-  {
-    imgPath: "/images/time.png",
-    title: "Consistent & Punctual",
-    desc: "Managing time efficiently and meeting deadlines in academic and personal projects.",
-  },
+  { name: "Work", link: "#work" },
+  { name: "Wins", link: "#wins" },
+  { name: "Experience", link: "#experience" },
+  { name: "Stack", link: "#stack" },
+  { name: "Contact", link: "#contact" },
 ];
-  
-  const techStackImgs = [
-    {
-      name: "React Developer",
-      imgPath: "/images/logos/react.png",
-    },
-    {
-      name: "Python Developer",
-      imgPath: "/images/logos/python.svg",
-    },
-    {
-      name: "Backend Developer",
-      imgPath: "/images/logos/node.png",
-    },
-    {
-      name: "Interactive Developer",
-      imgPath: "/images/logos/three.png",
-    },
-    {
-      name: "Project Manager",
-      imgPath: "/images/logos/git.svg",
-    },
-  ];
-  
-  const techStackIcons = [
-    {
-      name: "React Developer",
-      modelPath: "/models/react_logo-transformed.glb",
-      scale: 1,
-      rotation: [0, 0, 0],
-    },
-    {
-      name: "Java Developer",
-      modelPath: "/models/java.glb",
-      scale: 1.5,
-      rotation: [0, 0, 0],
-    },
-    {
-      name: "Backend Developer",
-      modelPath: "/models/node-transformed.glb",
-      scale: 5,
-      rotation: [0, -Math.PI / 2, 0],
-    },
-    {
-      name: "Competitive Programmer",
-      modelPath: "/models/c.glb",
-      scale: 0.08,
-      rotation: [0, 0, 0],
-    },
-    {
-      name: "Project Manager",
-      modelPath: "/models/git-svg-transformed.glb",
-      scale: 0.05,
-      rotation: [0, -Math.PI / 4, 0],
-    },
-  ];
-  
-const expCards = [
+
+// Magma ramp stops, shared by the hero cloud and the pipeline diagrams.
+const ramp = ["#3a2257", "#721f81", "#b5367a", "#f7845b", "#fcf3b0"];
+
+const projects = [
   {
-    review:
-      "Demonstrated strong self-motivation by independently learning modern web technologies and deploying real-world projects with version control best practices.",
-    imgPath: "/images/exp1.png",
-    logoPath: "/images/logo1.png",
-    title: "Self-Learning Web Projects",
-    date: "December 2024 - Present",
-    responsibilities: [
-      "Created and deployed responsive web apps using React, Next.js and modern javascript technologies.",
-      "Integrated Appwrite, Gemini API, Vapi Voice AI, and Google Cloud Auth into projects.",
-      "Maintained a clean GitHub profile showcasing commits, issues, and deployed links.",
+    id: "underwriteai",
+    name: "UnderwriteAI",
+    period: "Apr – Jul 2026",
+    summary:
+      "A risk assessment platform that scores insurance applicants with a stacked ML ensemble and explains every decision in plain language.",
+    problem:
+      "Manual underwriting takes weeks, and the reasoning behind a decision is hard for anyone to audit later.",
+    built: [
+      "A stacked ensemble — Random Forest and Gradient Boosting, with a Ridge meta-model trained via 5-fold CV — over 15+ engineered features from 6 data sources.",
+      "An OCR pipeline that extracts applicant data from 8 document types.",
+      "A RAG explanation layer (Llama 3.3 70B on Groq, LangChain + LangGraph) with fairness checks across gender and income groups.",
     ],
+    result: "Risk scores in seconds, each one shipped with an explanation an auditor can read.",
+    pipeline: ["Applicant data + OCR", "15+ features", "RF + GB", "Ridge meta-model", "RAG explainer"],
+    stack: ["Next.js", "NextAuth", "MongoDB", "PyTorch", "XGBoost", "LangChain", "LangGraph", "Groq"],
+    image: "/images/projects/underwriteai.webp",
+    imageAlt: "UnderwriteAI landing page showing its five-stage system architecture: ingestion, feature engineering, stacked ensemble, explanation and output.",
+    live: "https://the-debuggers-theta.vercel.app",
+    source: "https://github.com/imjayeshjadhav/the-debuggers",
   },
   {
-    review:
-      "Known for being punctual and dependable when it comes to academic projects, always delivering work on time with attention to both frontend and backend development.",
-    imgPath: "/images/exp2.png",
-    logoPath: "/images/logo2.png",
-    title: "Academic Projects",
-    date: "September 2024 - Present",
-    responsibilities: [
-      "Ensured all assigned deliverables were submitted well before deadlines.",
-      "Implemented academic projects using Java Swing for the frontend and MySQL for the backend, along with various other full-stack tools and frameworks.",
-      "Collaborated with peers on UI planning, backend logic, and project documentation.",
-      "Focused on writing clean, readable code and building responsive user interfaces.",
+    id: "timetable",
+    name: "Automated University Timetable Scheduler",
+    shortName: "Timetable",
+    award: "Smart India Hackathon 2025 — national winner",
+    period: "Sep – Dec 2025",
+    summary:
+      "Generates clash-free timetables for five degree programmes, so coordinators review options instead of building schedules by hand.",
+    problem:
+      "Scheduling BSc, B.Ed, M.Ed, ITEP and FY programmes by hand means juggling faculty availability and rooms across every department.",
+    built: [
+      "A constraint-satisfaction engine on Google OR-Tools that handles faculty availability, room allocation and clash-free slots at institute scale.",
+      "A role-based workflow from Institute Coordinator to Department Coordinator, built with Next.js 15 and Flask.",
+      "Gemini-assisted generation of 3 timetable options per department, with Excel and PDF export.",
     ],
+    result: "Cut manual scheduling effort by nearly 70%, and won first place among 481 teams.",
+    pipeline: ["Faculty, rooms, courses", "Constraints", "OR-Tools solver", "3 options / dept", "Excel + PDF"],
+    stack: ["Next.js 15", "React 18", "Tailwind v4", "Flask", "Google OR-Tools", "Gemini", "MongoDB", "NextAuth"],
+    image: null,
+    live: null,
+    source: null,
   },
   {
-    review:
-      "Contributed actively to college-level coding clubs and participated in various technical events, gaining hands-on experience and improving collaboration skills.",
-    imgPath: "/images/exp3.png",
-    logoPath: "/images/logo3.png",
-    title: "Tech Club Member (Marketing Head)",
-    date: "August 2023 - Present",
-    responsibilities: [
-      "Participated in hackathons and coding competitions organized by the club.",
-      "Helped organize workshops and peer-to-peer learning sessions on Git, Web Dev, and DSA.",
-      "Worked on mini-projects and coding challenges with fellow members.",
+    id: "threatlens",
+    name: "ThreatLens AI",
+    period: "Feb – Apr 2026",
+    summary:
+      "Reads plain-English vulnerability descriptions and predicts their severity and CWE category.",
+    problem:
+      "Security teams triage thousands of CVEs by hand, and the free-text descriptions don't map neatly onto severity or weakness type.",
+    built: [
+      "Trained and benchmarked SecureBERT, BERT, CNN, LSTM and GRU on 126K+ NVD CVE records, using time-based splits so evaluation reflects future CVEs.",
+      "A shared-model architecture that predicts severity and CWE category from one encoder.",
+      "A FastAPI inference service behind a React frontend.",
     ],
+    result: "About 8% higher F1 than training a separate model for each task.",
+    pipeline: ["CVE description", "Tokenizer", "Shared encoder", "Severity + CWE heads", "FastAPI"],
+    stack: ["PyTorch", "Hugging Face", "SecureBERT", "FastAPI", "React", "Scikit-learn", "Pandas"],
+    image: "/images/projects/threatlens.webp",
+    imageAlt: "ThreatLens landing page with the headline “Automating CVE triage with deep learning”.",
+    live: "https://threat-lens-ai-iota.vercel.app",
+    source: "https://github.com/imjayeshjadhav/ThreatLens-AI",
   },
 ];
 
-  
-  const expLogos = [
-    {
-      name: "logo1",
-      imgPath: "/images/logo1.png",
-    },
-    {
-      name: "logo2",
-      imgPath: "/images/logo2.png",
-    },
-    {
-      name: "logo3",
-      imgPath: "/images/logo3.png",
-    },
-  ];
-  
-  const testimonials = [
-    {
-      name: "Esther Howard",
-      mentions: "@estherhoward",
-      review:
-        "I can’t say enough good things about Adrian. He was able to take our complex project requirements and turn them into a seamless, functional website. His problem-solving abilities are outstanding.",
-      imgPath: "/images/client1.png",
-    },
-    {
-      name: "Wade Warren",
-      mentions: "@wadewarren",
-      review:
-        "Working with Adrian was a fantastic experience. He transformed our outdated website into a modern, user-friendly platform. His attention to detail and commitment to quality are unmatched. Highly recommend him for any web dev projects.",
-      imgPath: "/images/client3.png",
-    },
-    {
-      name: "Guy Hawkins",
-      mentions: "@guyhawkins",
-      review:
-        "Collaborating with Adrian was an absolute pleasure. His professionalism, promptness, and dedication to delivering exceptional results were evident throughout our project. Adrian's enthusiasm for every facet of development truly stands out. If you're seeking to elevate your website and elevate your brand, Adrian is the ideal partner.",
-      imgPath: "/images/client2.png",
-    },
-    {
-      name: "Marvin McKinney",
-      mentions: "@marvinmckinney",
-      review:
-        "Adrian was a pleasure to work with. He turned our outdated website into a fresh, intuitive platform that’s both modern and easy to navigate. Fantastic work overall.",
-      imgPath: "/images/client5.png",
-    },
-    {
-      name: "Floyd Miles",
-      mentions: "@floydmiles",
-      review:
-        "Adrian’s expertise in web development is truly impressive. He delivered a robust and scalable solution for our e-commerce site, and our online sales have significantly increased since the launch. He’s a true professional!",
-      imgPath: "/images/client4.png",
-    },
-    {
-      name: "Albert Flores",
-      mentions: "@albertflores",
-      review:
-        "Adrian was a pleasure to work with. He understood our requirements perfectly and delivered a website that exceeded our expectations. His skills in both frontend and backend dev are top-notch.",
-      imgPath: "/images/client6.png",
-    },
-  ];
-  
-  const socialImgs = [
-    {
-      name: "insta",
-      imgPath: "/images/insta.png",
-      link: "instagram.com/jjayeshhz"
-    },
-    {
-      name: "Github",
-      imgPath: "/images/fb.png",
-      link:"github.com/imjayeshjadhav"
-    },
-    {
-      name: "x",
-      imgPath: "/images/x.png",
-      link:"x.com/jjayeshhz"
-    },
-    {
-      name: "linkedin",
-      imgPath: "/images/linkedin.png",
-      link :"/"
-    },
-  ];
-  
-  export {
-    words,
-    abilities,
-    logoIconsList,
-    counterItems,
-    expCards,
-    expLogos,
-    testimonials,
-    socialImgs,
-    techStackIcons,
-    techStackImgs,
-    navLinks,
-  };
+const wins = [
+  {
+    rank: "1st",
+    of: "of 481 teams",
+    title: "Smart India Hackathon 2025",
+    note: "Team lead. India’s largest government hackathon.",
+  },
+  {
+    rank: "2nd",
+    of: "worldwide",
+    title: "NeoBIM Global Hackathon 2026",
+    note: "Team lead. International construction-tech hackathon.",
+  },
+  {
+    rank: "64th",
+    of: "of 18,500+ teams",
+    title: "Tata Elxsi Teleport S3",
+    note: "Round 2, top 0.35%.",
+  },
+  {
+    rank: "450+",
+    of: "problems solved",
+    title: "LeetCode",
+    note: "Plus a 2-star CodeChef rating from regular Starters contests.",
+  },
+];
+
+const experience = [
+  {
+    org: "Capillary Technologies",
+    role: "Software Development Engineer Intern",
+    period: "Sep 2026 – present",
+    place: "Bangalore, onsite",
+    logo: { src: "/images/experience/capillary.png", alt: "Capillary Technologies logo" },
+    detail:
+      "Building client-specific web and application features on top of Capillary’s products — custom AI workflows, API integrations and automation — with engineering and Professional Services teams.",
+  },
+  {
+    org: "Kumar Infotech",
+    role: "Website Developer Intern",
+    period: "May – Aug 2025",
+    place: "Mumbai, hybrid",
+    monogram: "KI",
+    detail:
+      "Built features in React, Next.js and Node.js, integrated REST APIs and reusable components, and shipped customer-facing updates in an agile team.",
+  },
+  {
+    org: "MIT Academy of Engineering",
+    role: "B.Tech, Computer Science and Engineering",
+    period: "2023 – 2027",
+    place: "Pune",
+    logo: { src: "/images/experience/mitaoe.svg", alt: "MIT Academy of Engineering logo", wide: true },
+    detail: "CGPA 7.86 / 10, latest SGPA 8.43.",
+  },
+];
+
+const skills = [
+  {
+    group: "AI and machine learning",
+    items: ["PyTorch", "TensorFlow", "Scikit-learn", "Hugging Face Transformers", "LangChain", "LangGraph", "RAG", "Vector databases", "MCP", "NLP and embeddings", "Fine-tuning", "Google OR-Tools"],
+  },
+  {
+    group: "Web and app",
+    items: ["React", "Next.js", "React Native", "Node.js", "Express", "FastAPI", "Flask", "GraphQL", "Tailwind CSS", "Redux / Zustand", "WebSockets", "SSR"],
+  },
+  {
+    group: "Languages",
+    items: ["Java", "C++", "Python", "JavaScript", "SQL"],
+  },
+  {
+    group: "Data, cloud and tools",
+    items: ["MongoDB", "Docker", "GitHub Actions", "JWT / OAuth", "REST APIs", "Postman", "Vercel", "Git"],
+  },
+  {
+    group: "Foundations",
+    items: ["Data structures and algorithms", "OOP", "DBMS", "Operating systems", "Computer networks"],
+  },
+];
+
+// Shown as floating 3D icons in the Stack section (models live in src/scene/iconModels.js).
+const stackIcons = [
+  { id: "pytorch", label: "PyTorch" },
+  { id: "tensorflow", label: "TensorFlow" },
+  { id: "huggingface", label: "Hugging Face" },
+  { id: "langchain", label: "LangChain" },
+  { id: "python", label: "Python" },
+  { id: "fastapi", label: "FastAPI" },
+  { id: "react", label: "React" },
+  { id: "nextjs", label: "Next.js" },
+  { id: "node", label: "Node.js" },
+  { id: "java", label: "Java" },
+  { id: "cpp", label: "C++" },
+  { id: "mongodb", label: "MongoDB" },
+  { id: "docker", label: "Docker" },
+  { id: "git", label: "Git" },
+];
+
+const socials = [
+  { name: "GitHub", url: "https://github.com/imjayeshjadhav" },
+  { name: "LinkedIn", url: "https://www.linkedin.com/in/jayesh-jadhav-813b36291/" },
+  { name: "Email", url: `mailto:${profile.email}` },
+  { name: "Instagram", url: "https://www.instagram.com/jjayeshhz/" },
+  { name: "X", url: "https://x.com/jjayeshhz" },
+];
+
+export { profile, navLinks, ramp, projects, wins, experience, skills, stackIcons, socials };

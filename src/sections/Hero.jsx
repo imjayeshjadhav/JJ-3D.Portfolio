@@ -1,79 +1,94 @@
-import React from 'react'
-import { words } from '../constants'
-import Button from '../components/Button'
-import HeroExperience from '../components/Models/HeroModels/HeroExperience'
-import { useGSAP } from '@gsap/react'
-import gsap from 'gsap'
-import AnimatedCounter from '../components/AnimatedCounter'
+import { useRef } from "react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
-const Hero = () => {
-  useGSAP(()=>{
-    gsap.fromTo('.hero-text h1',
-      {
-        y:50,
-        opacity:0,
-      },
-      {
-        y:0,
-        opacity:1,
-        stagger:0.2,
-        duration : 1,
-        ease:'power1.inOut'
-      }
-    )
-  })
+import { profile } from "../constants";
+import useMediaQuery from "../hooks/useMediaQuery";
+import useDragRotate from "../hooks/useDragRotate";
+
+const Hero = ({ webgl }) => {
+  const scope = useRef(null);
+  const isTouch = useMediaQuery("(pointer: coarse)");
+  const stage = useRef(null);
+  // The room is open on two sides; keep those facing the visitor.
+  useDragRotate(stage, "hero", 1.15);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap
+          .timeline({ defaults: { ease: "power4.out" } })
+          .from(".line > span", { yPercent: 110, duration: 1.2, stagger: 0.12 })
+          .from(".hero-copy", { opacity: 0, y: 16, duration: 0.8, stagger: 0.08 }, "-=0.7");
+
+        // Scrolling away, the name stretches wide and lifts off.
+        gsap.to(".hero-name", {
+          yPercent: -30,
+          opacity: 0.15,
+          fontVariationSettings: '"wdth" 100, "opsz" 96',
+          ease: "none",
+          scrollTrigger: { trigger: scope.current, start: "top top", end: "bottom top", scrub: 0.4 },
+        });
+      });
+      return () => mm.revert();
+    },
+    { scope }
+  );
+
   return (
-    <section id='hero' className='relative overflow-hidden' >
-      <div className='absolute top-0 left-0 z-10'>
-            <img src="/images/bg.png" alt="background" />
-        </div>
-        <div className='hero-layout'>
-        <header className="flex flex-col justify-center md:w-full w-screen md:px-20 px-5">
-          <div className="flex flex-col gap-7">
-            <div className="hero-text">
-              <h1>
-                Shaping
-                <span className="slide">
-                  <span className="wrapper">
-                    {words.map((word, index) => (
-                      <span
-                        key={index}
-                        className="flex items-center md:gap-3 gap-1 pb-2"
-                      >
-                        <img
-                          src={word.imgPath}
-                          alt="person"
-                          className="xl:size-12 md:size-10 size-7 md:p-2 p-1 rounded-full bg-white-50"
-                        />
-                        <span>{word.text}</span>
-                      </span>
-                    ))}
-                  </span>
-                </span>
-              </h1>
-              <h1>into Real Projects</h1>
-              <h1>that Deliver Results</h1>
-            </div>
-            <p className="text-white-50 md:text-xl relative z-10 pointer-events-none">
-              Hi, I’m Jayesh, a developer based in Pune, India with a passion for
-              code.
-            </p>
-            <Button
-              text="See My Work"
-              className="md:w-80 md:h-16 w-60 h-12"
-              id="button"
-            />
-          </div>
-        </header>
-        <figure>
-            <div className='hero-3d-layout'>
-                <HeroExperience/>
-            </div>
-        </figure>
-      </div>
-      <AnimatedCounter/>
-    </section>
-  )
-}
+    <section id="top" ref={scope} data-formation="hero" className="relative lg:min-h-[100svh]">
+      <div className="shell pointer-events-none relative z-10 grid pt-[calc(var(--nav-h)+3rem)] lg:min-h-[100svh] lg:grid-cols-12 lg:items-center lg:pt-[var(--nav-h)]">
+        <div className="pointer-events-auto lg:col-span-6 xl:col-span-5">
+          <h1 className="hero-name text-[clamp(4.25rem,15vw,9.5rem)]">
+            <span className="line"><span>Jayesh</span></span>
+            <span className="line"><span>Jadhav</span></span>
+          </h1>
 
-export default Hero
+          <p className="hero-copy mt-8 max-w-[30ch] font-display text-2xl leading-snug text-lilac md:text-[1.75rem]">
+            I build AI systems people can audit, and the full-stack apps around them.
+          </p>
+
+          <p className="hero-copy mt-5 max-w-[46ch] text-dim">
+            Software development engineer intern at Capillary Technologies. Final-year computer
+            science at MIT Academy of Engineering, {profile.location}.
+          </p>
+
+          <div className="hero-copy mt-9 flex flex-wrap gap-3">
+            <a href="#work" className="btn btn-solid">View work</a>
+            <a href={profile.resume} download className="btn btn-quiet">Download résumé</a>
+          </div>
+        </div>
+      </div>
+
+      {/* The shared scene draws the room here; this box only reserves the space. */}
+      <div
+        id="hero-stage"
+        ref={stage}
+        {...(webgl && {
+          tabIndex: 0,
+          role: "img",
+          "aria-label": "3D desk room. Drag, or use the arrow keys, to turn it.",
+        })}
+        className="drag-stage relative h-[62svh] min-h-[420px] lg:absolute lg:inset-y-0 lg:right-0 lg:h-auto lg:w-[60%]"
+      >
+        {!webgl && (
+          <img
+            src="/images/hero-fallback.webp"
+            alt="A desk setup inside a point cloud with three labelled clusters: UnderwriteAI, Timetable and ThreatLens."
+            className="size-full object-cover"
+          />
+        )}
+        {webgl && (
+          <p className="hero-copy pointer-events-none absolute bottom-6 right-4 text-sm text-dim sm:right-8 lg:right-12">
+            {isTouch
+              ? "Swipe sideways to turn the room. Tap a cluster to jump to that project."
+              : "Drag to turn the room. Select a cluster to jump to that project."}
+          </p>
+        )}
+      </div>
+    </section>
+  );
+};
+
+export default Hero;

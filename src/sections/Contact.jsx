@@ -1,25 +1,26 @@
 import { useRef, useState } from "react";
 import emailjs from "@emailjs/browser";
-import TitleHeader from "../components/TitleHeader";
-import ContactExperience from "../components/Models/Contact/ContactExperience";
+
+import { profile } from "../constants";
+import useDragRotate from "../hooks/useDragRotate";
+
+
 const Contact = () => {
   const formRef = useRef(null);
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const stage = useRef(null);
+  useDragRotate(stage, "contact");
+  const [status, setStatus] = useState("idle"); // idle | sending | sent | error
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    setForm((f) => ({ ...f, [name]: value }));
+    if (status !== "sending") setStatus("idle");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); 
-
+    setStatus("sending");
     try {
       await emailjs.sendForm(
         import.meta.env.VITE_APP_EMAILJS_SERVICE_ID,
@@ -27,88 +28,67 @@ const Contact = () => {
         formRef.current,
         import.meta.env.VITE_APP_EMAILJS_PUBLIC_KEY
       );
-
-      // Reset form and stop loading
       setForm({ name: "", email: "", message: "" });
+      setStatus("sent");
     } catch (error) {
-      console.error("EmailJS Error:", error); // Optional: show toast
-    } finally {
-      setLoading(false); // Always stop loading, even on error
+      console.error("EmailJS error:", error);
+      setStatus("error");
     }
   };
 
   return (
-    <section id="contact" className="flex-center section-padding">
-      <div className="w-full h-full md:px-10 px-5">
-        <TitleHeader
-          title="Get in Touch – Let’s Connect"
-          sub="💬 Have questions or ideas? Let’s talk! 🚀"
-        />
-        <div className="grid-12-cols mt-16">
-          <div className="xl:col-span-5">
-            <div className="flex-center card-border rounded-xl p-10">
-              <form
-                ref={formRef}
-                onSubmit={handleSubmit}
-                className="w-full flex flex-col gap-7"
-              >
-                <div>
-                  <label htmlFor="name">Your name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    placeholder="What’s your good name?"
-                    required
-                  />
-                </div>
+    <section id="contact" data-formation="contact" className="section border-t border-rule/60">
+      <div className="shell grid gap-12 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <h2 className="section-title">Get in touch</h2>
+          <p className="section-lede">
+            Hiring for an AI or full-stack role, or building something that needs both? Send a
+            message, or email{" "}
+            <a href={`mailto:${profile.email}`} className="text-link text-lilac">
+              {profile.email}
+            </a>
+            .
+          </p>
 
-                <div>
-                  <label htmlFor="email">Your Email</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="What’s your email address?"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="message">Your Message</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    value={form.message}
-                    onChange={handleChange}
-                    placeholder="How can I help you?"
-                    rows="5"
-                    required
-                  />
-                </div>
-
-                <button type="submit">
-                  <div className="cta-button group">
-                    <div className="bg-circle" />
-                    <p className="text">
-                      {loading ? "Sending..." : "Send Message"}
-                    </p>
-                  </div>
-                </button>
-
-              </form>
+          <form ref={formRef} onSubmit={handleSubmit} className="mt-10 flex flex-col gap-5">
+            <div>
+              <label htmlFor="name" className="mb-2 block text-sm text-lilac">Name</label>
+              <input id="name" name="name" type="text" autoComplete="name" required value={form.name} onChange={handleChange} className="field" />
             </div>
-          </div>
-          <div className="xl:col-span-7 min-h-96">
-            <div className="bg-[#cd7c2e] w-full h-full hover:cursor-grab rounded-3xl overflow-hidden">
-              <ContactExperience />
+            <div>
+              <label htmlFor="email" className="mb-2 block text-sm text-lilac">Email</label>
+              <input id="email" name="email" type="email" autoComplete="email" required value={form.email} onChange={handleChange} className="field" />
             </div>
-          </div>
+            <div>
+              <label htmlFor="message" className="mb-2 block text-sm text-lilac">Message</label>
+              <textarea id="message" name="message" rows="5" required value={form.message} onChange={handleChange} className="field resize-y" />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-4">
+              <button type="submit" disabled={status === "sending"} className="btn btn-solid disabled:opacity-60">
+                {status === "sending" ? "Sending…" : "Send message"}
+              </button>
+              <p role="status" aria-live="polite" className="text-sm">
+                {status === "sent" && <span className="text-flame">Message sent. I’ll reply by email.</span>}
+                {status === "error" && (
+                  <span className="text-ember">
+                    Couldn’t send your message. Check your connection and try again, or email me directly.
+                  </span>
+                )}
+              </p>
+            </div>
+          </form>
         </div>
+
+        {/* The shared scene draws the 3D desk here, ringed by the point cloud. */}
+        <div
+          id="contact-stage"
+          ref={stage}
+          tabIndex={0}
+          role="img"
+          aria-label="3D desk with a retro computer. Drag, or use the arrow keys, to turn it."
+          className="drag-stage order-first min-h-[340px] rounded-2xl border border-rule/70 lg:order-none lg:col-span-7 lg:min-h-[560px]"
+        />
       </div>
     </section>
   );

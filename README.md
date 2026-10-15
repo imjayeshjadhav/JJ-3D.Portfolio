@@ -1,12 +1,24 @@
-# React + Vite
+# Jayesh Jadhav — portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React 19 + Vite 6, three.js via React Three Fiber, GSAP + Lenis for scroll.
 
-Currently, two official plugins are available:
+## How the 3D works
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+One fixed WebGL canvas (`src/scene/SceneCanvas.jsx`) sits behind the whole page.
 
-## Expanding the ESLint configuration
+- `MorphCloud` — a single particle system (12k points desktop, 4.5k mobile) that
+  morphs between per-section shapes as you scroll. Shapes live in
+  `src/scene/formations.js`; each section opts in with `data-formation="…"`.
+- `HeroRoom`, `ContactModel`, `StackIcons` — real models pinned to DOM elements
+  (`#hero-stage`, `#contact-stage`, `[data-icon3d]`) so they scroll with the page.
+- `StackGraph` — labels and hover targets over the Stack neural-net formation.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+Reduced motion turns off smooth scroll and scroll-scrubbed morphs.
+
+## Develop
+
+```bash
+npm install
+cp .env.example .env   # EmailJS service, template and public key
+npm run dev
+```

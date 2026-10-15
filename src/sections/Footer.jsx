@@ -1,27 +1,24 @@
-import { socialImgs } from "../constants";
+import { profile, socials } from "../constants";
 
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <div className="footer-container">
-        <div className="flex flex-col justify-center">
-          <p>Terms & Conditions</p>
-        </div>
-        <div className="socials">
-          {socialImgs.map((socialImg, index) => (
-            <div key={index} className="icon">
-              <img src={socialImg.imgPath} alt="social icon" />
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-col justify-center">
-          <p className="text-center md:text-end">
-            © {new Date().getFullYear()} Jayesh Jadhav. All rights reserved.
-          </p>
-        </div>
-      </div>
-    </footer>
-  );
-};
+const Footer = () => (
+  <footer className="border-t border-rule/60 py-10">
+    <div className="shell flex flex-col gap-6 text-sm text-dim md:flex-row md:items-center md:justify-between">
+      <p>© {new Date().getFullYear()} {profile.name}. Built with React, three.js and GSAP.</p>
+      <ul className="flex flex-wrap gap-x-6 gap-y-2">
+        {socials.map(({ name, url }) => (
+          <li key={name}>
+            <a
+              href={url}
+              className="text-link"
+              {...(url.startsWith("http") ? { target: "_blank", rel: "noreferrer" } : {})}
+            >
+              {name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </footer>
+);
 
 export default Footer;
