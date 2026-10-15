@@ -31,8 +31,10 @@ const Ready = () => {
 const SceneCanvas = () => {
   const [dpr, setDpr] = useState(1.5);
 
+  // h-lvh: sized for the browser bar hidden, so showing or hiding it on
+  // phones never resizes the canvas (which would make the scene jump).
   return (
-    <div className="pointer-events-none fixed inset-0 z-0" aria-hidden="true">
+    <div className="pointer-events-none fixed inset-x-0 top-0 z-0 h-lvh" aria-hidden="true">
       <Canvas
         eventSource={document.getElementById("root")}
         eventPrefix="client"
