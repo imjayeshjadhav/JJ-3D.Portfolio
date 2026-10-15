@@ -19,6 +19,5 @@ Reduced motion turns off smooth scroll and scroll-scrubbed morphs.
 
 ```bash
 npm install
-cp .env.example .env   # EmailJS service, template and public key
 npm run dev
 ```
