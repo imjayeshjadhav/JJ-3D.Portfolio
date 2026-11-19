@@ -1,41 +1,46 @@
 import * as THREE from "three";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import {
+  siClaude,
+  siDatabricks,
   siDocker,
   siFastapi,
+  siGooglebigquery,
+  siGooglecloud,
   siHuggingface,
   siLangchain,
-  siMongodb,
   siNextdotjs,
+  siPytest,
   siPytorch,
-  siTensorflow,
 } from "simple-icons";
 
 // Palette metals, one per skill group, so the shelf reads as one set.
 // Hovering an icon warms it to its brand colour.
 const FINISH = {
-  ai: "#c4467f", // rose
-  language: "#fcf3b0", // flame
-  web: "#f7845b", // ember
-  tools: "#d9cde8", // lilac
+  ai: "#c9a96e", // champagne gold
+  language: "#e9e4da", // ivory
+  web: "#a88a57", // antique brass
+  tools: "#a3a8b0", // steel
 };
 
-// Six logos are real models from the original portfolio; the rest are
-// extruded from Simple Icons paths so every tool on the shelf is 3D.
+// Five logos are real models from the original portfolio; the rest are
+// extruded from Simple Icons paths so every tool on the ring is 3D.
 export const ICON_MODELS = {
-  pytorch: { svg: siPytorch, finish: "ai" },
-  tensorflow: { svg: siTensorflow, finish: "ai" },
-  huggingface: { svg: siHuggingface, finish: "ai" },
+  claude: { svg: siClaude, finish: "ai" },
   langchain: { svg: siLangchain, finish: "ai", brand: "#7fc8a9" },
+  pytorch: { svg: siPytorch, finish: "ai" },
+  huggingface: { svg: siHuggingface, finish: "ai" },
   python: { glb: "/models/python-transformed.glb", finish: "language", brand: "#3776ab" },
   java: { glb: "/models/java.glb", finish: "language", brand: "#e76f00" },
   cpp: { glb: "/models/c.glb", finish: "language", brand: "#00599c" },
   fastapi: { svg: siFastapi, finish: "web" },
   react: { glb: "/models/react_logo-transformed.glb", finish: "web", brand: "#61dafb" },
   nextjs: { svg: siNextdotjs, finish: "web", brand: "#ffffff" },
-  node: { glb: "/models/node-transformed.glb", finish: "web", brand: "#5fa04e", rotation: [0, -Math.PI / 2, 0] },
-  mongodb: { svg: siMongodb, finish: "tools" },
+  bigquery: { svg: siGooglebigquery, finish: "tools" },
+  databricks: { svg: siDatabricks, finish: "tools" },
+  googlecloud: { svg: siGooglecloud, finish: "tools" },
   docker: { svg: siDocker, finish: "tools" },
+  pytest: { svg: siPytest, finish: "tools" },
   git: { glb: "/models/git-svg-transformed.glb", finish: "tools", brand: "#f05032", rotation: [0, -Math.PI / 4, 0] },
 };
 

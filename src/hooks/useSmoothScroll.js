@@ -29,13 +29,14 @@ const useSmoothScroll = () => {
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
 
-    // Section titles widen along Bricolage's width axis as they arrive.
+    // Section titles tighten and settle into place as they arrive.
     const titles = gsap.utils.toArray(".section-title").map((el) =>
       gsap.fromTo(
         el,
-        { fontVariationSettings: '"wdth" 75' },
+        { letterSpacing: "0.02em", opacity: 0.35 },
         {
-          fontVariationSettings: '"wdth" 100',
+          letterSpacing: "-0.025em",
+          opacity: 1,
           ease: "none",
           scrollTrigger: { trigger: el, start: "top 95%", end: "top 45%", scrub: 0.5 },
         }

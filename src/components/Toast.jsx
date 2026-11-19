@@ -22,7 +22,7 @@ const Toast = () => {
   return (
     <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-6 z-[85] flex justify-center">
       {message && (
-        <p className="rounded-full border border-rule bg-plum px-4 py-2 text-sm text-flame shadow-[0_10px_40px_-10px_rgba(18,10,36,0.9)]">
+        <p className="rounded-full border border-rule bg-surface px-4 py-2 text-sm text-gold-soft shadow-[0_10px_40px_-10px_rgba(18,10,36,0.9)]">
           {message}
         </p>
       )}

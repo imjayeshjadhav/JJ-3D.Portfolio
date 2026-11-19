@@ -55,16 +55,16 @@ const About = () => {
         <div className="lg:col-span-7">
           <div className="about-text">
             <p
-              className="font-display text-3xl leading-tight text-flame md:text-[2.5rem]"
-              style={{ fontVariationSettings: '"wdth" 85' }}
+              className="font-display text-3xl leading-tight text-ivory md:text-[2.5rem]"
+              style={{ fontVariationSettings: '"opsz" 144' }}
             >
               <Words text={lead} />
             </p>
-            <p className="mt-6 text-lg text-lilac">
+            <p className="mt-6 text-lg text-fg">
               <Words text={opening} />
             </p>
             {about.paragraphs.slice(1).map((paragraph) => (
-              <p key={paragraph.slice(0, 24)} className="mt-5 text-lg text-lilac">
+              <p key={paragraph.slice(0, 24)} className="mt-5 text-lg text-fg">
                 <Words text={paragraph} />
               </p>
             ))}
@@ -73,31 +73,31 @@ const About = () => {
           <dl className="mt-12 grid gap-x-8 gap-y-5 border-t border-rule/60 pt-8 sm:grid-cols-3">
             {about.facts.map(({ term, detail }) => (
               <div key={term}>
-                <dt className="text-sm text-dim">{term}</dt>
-                <dd className="mt-1 text-lilac">{detail}</dd>
+                <dt className="text-sm text-muted">{term}</dt>
+                <dd className="mt-1 text-fg">{detail}</dd>
               </div>
             ))}
           </dl>
 
           <ul className="mt-8 flex flex-wrap gap-x-8 gap-y-3">
             <li>
-              <a href={profile.github} target="_blank" rel="noreferrer" className="text-link text-lilac">
+              <a href={profile.github} target="_blank" rel="noreferrer" className="text-link text-fg">
                 GitHub
               </a>
-              <span className="ml-3 text-sm text-dim">
+              <span className="ml-3 text-sm text-muted">
                 {github.publicRepos} public repositories, {github.followers} followers
               </span>
             </li>
             <li>
-              <a href={profile.linkedin} target="_blank" rel="noreferrer" className="text-link text-lilac">
+              <a href={profile.linkedin} target="_blank" rel="noreferrer" className="text-link text-fg">
                 LinkedIn
               </a>
             </li>
             <li>
-              <a href={profile.leetcode} target="_blank" rel="noreferrer" className="text-link text-lilac">
+              <a href={profile.leetcode} target="_blank" rel="noreferrer" className="text-link text-fg">
                 LeetCode
               </a>
-              <span className="ml-3 text-sm text-dim">{leetcode.solved.all} problems solved</span>
+              <span className="ml-3 text-sm text-muted">{leetcode.solved.all} problems solved</span>
             </li>
           </ul>
         </div>
@@ -106,14 +106,14 @@ const About = () => {
       <div className="shell mt-20" data-formation="activity">
         <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
           <div>
-            <h3 className="font-sans text-lg font-semibold tracking-normal text-lilac">A year on LeetCode</h3>
-            <p className="mt-1 text-sm text-dim">
+            <h3 className="font-sans text-lg font-semibold tracking-normal text-fg">A year on LeetCode</h3>
+            <p className="mt-1 text-sm text-muted">
               {leetcode.solved.all} problems solved: {leetcode.solved.easy} easy, {leetcode.solved.medium} medium,{" "}
               {leetcode.solved.hard} hard.
             </p>
           </div>
-          <p className="text-sm text-dim">
-            <span className="text-ember">{leetcode.streak}-day streak</span>, {leetcode.activeDays} active days,{" "}
+          <p className="text-sm text-muted">
+            <span className="text-gold">{leetcode.streak}-day streak</span>, {leetcode.activeDays} active days,{" "}
             {leetcode.total} submissions in the last year
           </p>
         </div>

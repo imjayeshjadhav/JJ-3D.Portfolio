@@ -10,6 +10,7 @@ import store from "./scene/store";
 import SceneBoundary from "./components/SceneBoundary";
 import useSmoothScroll from "./hooks/useSmoothScroll";
 import Hero from "./sections/Hero";
+import Capillary from "./sections/Capillary";
 import Wins from "./sections/Wins";
 import About from "./sections/About";
 import Work from "./sections/Work";
@@ -72,10 +73,10 @@ const App = () => {
   return (
     <>
       <a
-        href="#work"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-flame focus:px-4 focus:py-2 focus:text-night"
+        href="#capillary"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-gold-soft focus:px-4 focus:py-2 focus:text-ink"
       >
-        Skip to work
+        Skip to the Capillary work
       </a>
 
       {webgl && <Loader />}
@@ -90,14 +91,14 @@ const App = () => {
           </Suspense>
         </SceneBoundary>
       )}
-      {/* Gradient map used to tint project screenshots into the magma palette. */}
+      {/* Gradient map used to tint project screenshots into the champagne palette. */}
       <svg width="0" height="0" className="absolute" aria-hidden="true" focusable="false">
-        <filter id="magma-duotone" colorInterpolationFilters="sRGB">
+        <filter id="gold-duotone" colorInterpolationFilters="sRGB">
           <feColorMatrix type="saturate" values="0" />
           <feComponentTransfer>
-            <feFuncR type="table" tableValues="0.07 0.71 0.97 0.99" />
-            <feFuncG type="table" tableValues="0.04 0.21 0.52 0.95" />
-            <feFuncB type="table" tableValues="0.14 0.48 0.36 0.69" />
+            <feFuncR type="table" tableValues="0.055 0.35 0.79 0.96" />
+            <feFuncG type="table" tableValues="0.059 0.27 0.66 0.94" />
+            <feFuncB type="table" tableValues="0.067 0.17 0.43 0.89" />
           </feComponentTransfer>
         </filter>
       </svg>
@@ -108,8 +109,9 @@ const App = () => {
       <Navbar />
       <main className="relative z-10">
         <Hero webgl={webgl} />
-        <About />
+        <Capillary />
         <Work />
+        <About />
         <Wins />
         <ExperienceSection />
         <TechStack />

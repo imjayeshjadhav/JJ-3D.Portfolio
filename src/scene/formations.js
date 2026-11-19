@@ -2,7 +2,7 @@ import { experience } from "../constants";
 
 /*
   Every formation is exactly `count` points plus a hue per point (0..1 along
-  the magma ramp). Shapes are built in unit space (roughly -1..1) and scaled by
+  the champagne ramp). Shapes are built in unit space (roughly -1..1) and scaled by
   the layout radius, except the hero, which is built in room units around the
   room. Each shape encodes the section it sits behind.
 
@@ -132,13 +132,15 @@ const boxEdges = (cx, cy, cz, w, h, d) => {
 
 /* ---------------- hero: shell plus one cluster per project ---------------- */
 
-export const HERO_CLUSTERS = {
-  underwriteai: [-4.3, 2.6, 0.8],
-  timetable: [4.6, 3.3, -1.2],
-  threatlens: [4.2, -1.9, 2.2],
-};
+// One cluster per featured piece of work; the labels link to its section.
+export const HERO_CLUSTERS = [
+  { target: "capillary", label: "Client Health Monitor", position: [-4.3, 2.6, 0.8] },
+  { target: "work-university", label: "University platform", position: [4.6, 3.3, -1.2] },
+  { target: "work-campuscompass", label: "CampusCompass", position: [-4.6, -1.7, 1.4] },
+  { target: "work-threatlens", label: "ThreatLens AI", position: [4.2, -1.9, 2.2] },
+];
 
-const HERO_VISIBLE = 4400;
+const HERO_VISIBLE = 3000;
 
 // leftSpan: how far the light sprinkle reaches left of the room, in room units.
 const hero = (count, rand, leftSpan, halfHeight) => {
@@ -156,8 +158,8 @@ const hero = (count, rand, leftSpan, halfHeight) => {
         o[3] = rand() * 0.45;
       },
     },
-    ...Object.values(HERO_CLUSTERS).map((c) => ({
-      weight: 280,
+    ...HERO_CLUSTERS.map(({ position: c }) => ({
+      weight: 220,
       gen: (rand, o) => {
         const s = 0.75;
         const dx = gaussian(rand) * s, dy = gaussian(rand) * s, dz = gaussian(rand) * s;
@@ -171,7 +173,7 @@ const hero = (count, rand, leftSpan, halfHeight) => {
     {
       // A field across the whole landing page, from the left edge past the
       // room, set back in depth so it never hides the room itself.
-      weight: leftSpan > 0 ? 2400 : 0,
+      weight: leftSpan > 0 ? 1200 : 0,
       gen: (rand, o) => {
         o[0] = -leftSpan * 1.05 + rand() * (leftSpan * 1.05 + 7);
         o[1] = (rand() * 2 - 1) * halfHeight * 1.05;
@@ -183,36 +185,136 @@ const hero = (count, rand, leftSpan, halfHeight) => {
   return padHidden(shape, count, rand, 7);
 };
 
-/* ------------- UnderwriteAI: two trees feeding a meta-model --------------- */
+/* ------- Capillary: five data streams feeding one 0–10 health gauge ------- */
 
-const ensemble = (count, rand) => {
+const GAUGE = { cx: 0.35, cy: -0.05, r: 0.62, from: (210 * Math.PI) / 180, to: (-30 * Math.PI) / 180 };
+const gaugePoint = (t, r = GAUGE.r) => {
+  const a = GAUGE.from + (GAUGE.to - GAUGE.from) * t;
+  return [GAUGE.cx + Math.cos(a) * r, GAUGE.cy + Math.sin(a) * r];
+};
+const SOURCES = [0.85, 0.45, 0.05, -0.35, -0.75].map((y) => [-1.3, y]);
+
+const chm = (count, rand) =>
+  padHidden(
+    fill(Math.min(count, 5200), rand, [
+      {
+        // New Relic, Jira, ServiceNow, Databricks and NPS, curving into the gauge
+        weight: 0.42,
+        gen: (rand, o) => {
+          const [sx, sy] = SOURCES[Math.floor(rand() * SOURCES.length)];
+          const t = rand();
+          const cx = -0.45;
+          const cy = sy * 0.25;
+          const u = 1 - t;
+          o[0] = u * u * sx + 2 * u * t * cx + t * t * GAUGE.cx + gaussian(rand) * 0.008;
+          o[1] = u * u * sy + 2 * u * t * cy + t * t * GAUGE.cy + gaussian(rand) * 0.008;
+          o[2] = gaussian(rand) * 0.03;
+          o[3] = 0.3 + 0.5 * t;
+        },
+      },
+      {
+        // the gauge arc, warming from 0 to 10
+        weight: 0.28,
+        gen: (rand, o) => {
+          const t = rand();
+          const [x, y] = gaugePoint(t, GAUGE.r + gaussian(rand) * 0.012);
+          o[0] = x;
+          o[1] = y;
+          o[2] = gaussian(rand) * 0.02;
+          o[3] = 0.45 + 0.5 * t;
+        },
+      },
+      // eleven ticks, 0 through 10
+      blobPart(0.1, Array.from({ length: 11 }, (_, i) => [...gaugePoint(i / 10, GAUGE.r + 0.1), 0]), 0.012, 0.9),
+      {
+        // the needle, resting near 8
+        weight: 0.08,
+        gen: (rand, o) => {
+          const t = rand();
+          const [x, y] = gaugePoint(0.8, GAUGE.r * 0.85 * t);
+          o[0] = x + gaussian(rand) * 0.006;
+          o[1] = y + gaussian(rand) * 0.006;
+          o[2] = 0.02;
+          o[3] = 0.82;
+        },
+      },
+      blobPart(0.03, [[GAUGE.cx, GAUGE.cy, 0]], 0.04, 0.9),
+      { ...haze(1.7), weight: 0.06 },
+    ]),
+    count,
+    rand,
+    1.9
+  );
+
+/* -------- CampusCompass: a campus skyline with a walking path ------------- */
+
+const BUILDINGS = [
+  [-0.85, -0.3, 0.32, 0.55], [-0.4, -0.45, 0.28, 0.9], [0.05, -0.25, 0.36, 0.42],
+  [0.5, -0.45, 0.3, 0.75], [0.88, -0.2, 0.26, 0.5], [-0.6, 0.3, 0.3, 0.38],
+  [-0.05, 0.35, 0.32, 0.6], [0.45, 0.32, 0.28, 0.32], [0.9, 0.35, 0.22, 0.48],
+];
+// Walking route from the first building to the last, along the paths.
+const ROUTE = [[-0.85, -0.05], [-0.62, -0.05], [-0.62, 0.05], [-0.2, 0.05], [-0.2, 0.08], [0.25, 0.08], [0.25, 0.1], [0.7, 0.1], [0.9, 0.12]];
+
+// Tilt a flat site plan toward the viewer so it reads as 3D.
+const tiltPlan = ({ positions, hues }) => {
+  const ax = 0.55;
+  const ay = -0.35;
+  for (let i = 0; i < positions.length; i += 3) {
+    let x = positions[i];
+    let y = positions[i + 1];
+    let z = positions[i + 2];
+    const x1 = x * Math.cos(ay) + z * Math.sin(ay);
+    const z1 = -x * Math.sin(ay) + z * Math.cos(ay);
+    x = x1;
+    z = z1;
+    const y2 = y * Math.cos(ax) - z * Math.sin(ax);
+    const z2 = y * Math.sin(ax) + z * Math.cos(ax);
+    positions[i] = x * 1.05;
+    positions[i + 1] = y2 - 0.1;
+    positions[i + 2] = z2;
+  }
+  return { positions, hues };
+};
+
+const campus = (count, rand) => {
+  // Plan coordinates: x across, z = depth on the site, y = height.
   const segments = [];
-  const nodes = [];
-  const leaves = [];
-  const META = [0, -0.92, 0];
-  const branch = (x, y, z, dx, depth) => {
-    nodes.push([x, y, z]);
-    if (depth === 0) {
-      leaves.push([x, y, z]);
-      return;
+  const hueOf = [];
+  for (const [x, z, s, h] of BUILDINGS) {
+    for (const seg of boxEdges(x, -0.35, z, s, h, s)) {
+      // boxEdges takes (cx, cy, cz, w, h, d) with y as height
+      segments.push(seg);
+      hueOf.push(0.6 + h * 0.35);
     }
-    for (const dir of [-1, 1]) {
-      const child = [x + dir * dx, y - 0.3, z];
-      segments.push([[x, y, z], child]);
-      branch(child[0], child[1], z, dx / 2, depth - 1);
-    }
-  };
-  branch(-0.6, 0.95, -0.25, 0.3, 4);
-  branch(0.6, 0.95, 0.25, 0.3, 4);
-  const toMeta = leaves.map((l) => [l, META]);
-
-  return fill(count, rand, [
-    segmentPart(0.4, segments, (a, b, t) => lerp(0.35, 0.6, (0.95 - lerp(a[1], b[1], t)) / 1.2)),
-    segmentPart(0.22, toMeta, (a, b, t) => lerp(0.55, 0.85, t), 0.008),
-    blobPart(0.16, nodes, 0.03, 0.78),
-    blobPart(0.1, [META], 0.07, 1),
-    haze(),
-  ]);
+  }
+  const route = ROUTE.slice(1).map((p, i) => [[ROUTE[i][0], -0.34, ROUTE[i][1]], [p[0], -0.34, p[1]]]);
+  return padHidden(
+    tiltPlan(
+      fill(Math.min(count, 5200), rand, [
+        segmentPart(0.62, segments, (a, b, t, i) => hueOf[i], 0.006),
+        {
+          // the ground: a faint grid of paths
+          weight: 0.18,
+          gen: (rand, o) => {
+            const along = rand() < 0.5;
+            const line = Math.round((rand() * 2 - 1) * 4) / 4;
+            const t = rand() * 2 - 1;
+            o[0] = (along ? t : line) * 1.1;
+            o[1] = -0.35;
+            o[2] = (along ? line : t) * 0.75;
+            o[3] = 0.2;
+          },
+        },
+        segmentPart(0.1, route, () => 0.84, 0.006),
+        blobPart(0.05, [[ROUTE[0][0], -0.3, ROUTE[0][1]], [ROUTE[ROUTE.length - 1][0], -0.3, ROUTE[ROUTE.length - 1][1]]], 0.03, 1),
+        { ...haze(1.6), weight: 0.05 },
+      ])
+    ),
+    count,
+    rand,
+    1.9
+  );
 };
 
 /* -------- Timetable: 6 × 6 lattice of slots, three candidate options ------- */
@@ -470,8 +572,10 @@ const constellation = (count, rand) => {
 
 // Hovering stage i of a case study's pipeline lights this spot in the cloud.
 export const PIPELINE_ANCHORS = {
-  "work-underwriteai": [[0, 0.95, 0], [0, 0.62, 0], [0, 0.2, 0], [0, -0.92, 0], [0, -0.55, 0]],
-  "work-timetable": [[-0.9, 0.9, -0.62], [0, 0, -0.62], [0, 0, 0], [0, 0, 0.62], [0.9, -0.9, 0.62]],
+  // Capillary diagram nodes: sources, Python jobs, BigQuery, score, SLA alerts, Claude triage, Ask CHM.
+  capillary: [[-1.3, 0.05, 0], [-0.6, 0.02, 0], [-0.05, -0.02, 0], [0.35, -0.05, 0], [0.35, 0.6, 0], [0.8, -0.4, 0], [0.75, 0.35, 0]],
+  "work-university": [[-0.9, 0.9, -0.62], [0, 0, -0.62], [0, 0, 0], [0, 0, 0.62], [0.9, -0.9, 0.62]],
+  "work-campuscompass": [[-0.85, -0.2, 0], [-0.4, 0.2, 0], [0.05, -0.1, 0], [0.5, 0.2, 0], [0.9, -0.25, 0]],
   "work-threatlens": [[0, -0.6, 0.3], [0, -0.3, 0.25], [0, 0.15, 0.28], [0, 0.6, 0.25], [0, 0.92, 0.2]],
 };
 
@@ -514,10 +618,13 @@ export const buildFormations = (count, layout) => {
     about: transform(constellation(count, mulberry32(10)), radius, offsets.about),
     // Behind the GitHub bars: the constellation scatters into faint dust.
     activity: transform(padHidden(fill(Math.min(count, 1800), mulberry32(19), [haze(2.4)]), count, mulberry32(20), 2.4), radius, offsets.activity),
-    "work-underwriteai": transform(ensemble(count, mulberry32(11)), radius, offsets["work-underwriteai"]),
-    "work-timetable": transform(lattice(count, mulberry32(12)), radius, offsets["work-timetable"]),
+    capillary: transform(chm(count, mulberry32(11)), radius, offsets.capillary),
+    // Behind the Capillary diagram: the gauge loosens into faint dust.
+    "capillary-detail": transform(padHidden(fill(Math.min(count, 1600), mulberry32(23), [haze(2.4)]), count, mulberry32(24), 2.4), radius, [0, 0, -2]),
+    "work-university": transform(lattice(count, mulberry32(12)), radius, offsets["work-university"]),
+    "work-campuscompass": transform(campus(count, mulberry32(22)), radius, offsets["work-campuscompass"]),
     "work-threatlens": transform(shield(count, mulberry32(13)), radius, offsets["work-threatlens"]),
-    wins: transform(podium(count, mulberry32(14)), radius, offsets.wins),
+    wins: transform(podium(count, mulberry32(14)), layout.mobile ? radius : radius * 0.55, offsets.wins),
     experience: transform(helix(count, mulberry32(15)), radius * 0.8, offsets.experience),
     // Phones do not pin the Stack ring, so the orbit could not line up with it.
     stack: layout.mobile

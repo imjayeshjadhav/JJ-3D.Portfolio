@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import * as THREE from "three";
 
-// Lights are tinted from the magma ramp: a warm flame key, rose and plum fills.
+// Warm, low-key studio light: an ivory desk lamp, champagne and bronze fills.
 const HeroLights = () => {
-  const areaLight = useMemo(() => new THREE.RectAreaLight("#b5367a", 8, 3, 2), []);
+  const areaLight = useMemo(() => new THREE.RectAreaLight("#c9a96e", 6, 3, 2), []);
 
   return (
     <>
@@ -13,23 +13,23 @@ const HeroLights = () => {
         angle={0.15}
         penumbra={0.2}
         intensity={100}
-        color="#fcf3b0"
+        color="#f4efe4"
       />
-      {/* ember overhead */}
+      {/* champagne overhead */}
       <spotLight
         position={[4, 5, 4]}
         angle={0.3}
         penumbra={0.5}
-        intensity={45}
-        color="#f7845b"
+        intensity={70}
+        color="#c9a96e"
       />
-      {/* rose side fill */}
+      {/* bronze side fill */}
       <spotLight
         position={[-3, 5, 5]}
         angle={0.4}
         penumbra={1}
-        intensity={60}
-        color="#b5367a"
+        intensity={80}
+        color="#8c6a3f"
       />
       <primitive
         object={areaLight}
@@ -37,8 +37,8 @@ const HeroLights = () => {
         rotation={[-Math.PI / 4, Math.PI / 4, 0]}
         intensity={15}
       />
-      <pointLight position={[0, 1, 0]} intensity={10} color="#721f81" />
-      <pointLight position={[1, 2, -2]} intensity={10} color="#3a2257" />
+      <pointLight position={[0, 1, 0]} intensity={18} color="#c9a96e" />
+      <pointLight position={[1, 2, -2]} intensity={10} color="#2a2d33" />
     </>
   );
 };

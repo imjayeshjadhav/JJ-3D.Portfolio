@@ -19,7 +19,7 @@ const Contact = () => {
           <p className="section-lede">
             Hiring for an AI or full-stack role, or building something that needs both? Write to
             me at{" "}
-            <a href={`mailto:${profile.email}`} onClick={onEmailClick} data-cursor="copy" className="text-link text-lilac">
+            <a href={`mailto:${profile.email}`} onClick={onEmailClick} data-cursor="copy" className="text-link text-fg">
               {profile.email}
             </a>
             .

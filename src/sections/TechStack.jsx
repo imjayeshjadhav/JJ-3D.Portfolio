@@ -20,7 +20,7 @@ const UsedIn = ({ skill }) => {
       Used in{" "}
       {used.map((p, i) => (
         <span key={p.id}>
-          <a href={`#work-${p.id}`} className="text-link text-lilac">
+          <a href={`#work-${p.id}`} className="text-link text-fg">
             {p.shortName ?? p.name}
           </a>
           {i < used.length - 2 ? ", " : i === used.length - 2 ? " and " : ""}
@@ -81,7 +81,7 @@ const TechStack = () => {
               type="button"
               onClick={() => nudge(-1)}
               aria-label="Previous tool"
-              className="grid size-11 shrink-0 place-items-center rounded-full border border-rule text-lilac transition-colors hover:border-ember hover:text-flame"
+              className="grid size-11 shrink-0 place-items-center rounded-full border border-rule text-fg transition-colors hover:border-gold hover:text-gold-soft"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                 <path d="M10 3L5 8l5 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -89,14 +89,14 @@ const TechStack = () => {
             </button>
 
             <div aria-live="polite" className="min-h-[6.5rem] w-full max-w-md text-center">
-              <p className="text-sm text-ember">{groupOf(tool.skill)}</p>
+              <p className="text-sm text-gold">{groupOf(tool.skill)}</p>
               <p
-                className="mt-1 font-display text-4xl font-bold text-flame md:text-5xl"
-                style={{ fontVariationSettings: '"wdth" 85' }}
+                className="mt-1 font-display text-4xl font-medium text-ivory md:text-5xl"
+                style={{ fontVariationSettings: '"opsz" 144' }}
               >
                 {tool.label}
               </p>
-              <p className="mt-2 text-sm text-dim">
+              <p className="mt-2 text-sm text-muted">
                 <UsedIn skill={tool.skill} />
               </p>
             </div>
@@ -105,7 +105,7 @@ const TechStack = () => {
               type="button"
               onClick={() => nudge(1)}
               aria-label="Next tool"
-              className="grid size-11 shrink-0 place-items-center rounded-full border border-rule text-lilac transition-colors hover:border-ember hover:text-flame"
+              className="grid size-11 shrink-0 place-items-center rounded-full border border-rule text-fg transition-colors hover:border-gold hover:text-gold-soft"
             >
               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
                 <path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
@@ -120,9 +120,9 @@ const TechStack = () => {
         <dl>
           {skills.map(({ group, items }) => (
             <div key={group} className="grid gap-3 border-t border-rule/60 py-6 md:grid-cols-12 md:gap-8">
-              <dt className="font-medium text-flame md:col-span-3">{group}</dt>
+              <dt className="font-medium text-gold-soft md:col-span-3">{group}</dt>
               <dd className="md:col-span-9">
-                <ul className="flex flex-wrap gap-x-5 gap-y-2 text-lilac">
+                <ul className="flex flex-wrap gap-x-5 gap-y-2 text-fg">
                   {items.map((item) => (
                     <li key={item}>{item}</li>
                   ))}

@@ -6,7 +6,7 @@ import leetcode from "../data/leetcode.json";
 import store, { rectToWorld } from "./store";
 import { useEnvMap } from "./envMap";
 
-const LEVEL_COLORS = ["#22143f", "#721f81", "#b5367a", "#f7845b", "#fcf3b0"].map((c) => new THREE.Color(c));
+const LEVEL_COLORS = ["#1d2025", "#5a4630", "#8c6a3f", "#c9a96e", "#f4efe4"].map((c) => new THREE.Color(c));
 const RISE_SECONDS = 0.7;
 
 const formatDay = ({ date, count }) => {
@@ -132,7 +132,7 @@ const ActivityBars = () => {
 
   return (
     <>
-      <hemisphereLight ref={light} args={["#fcf3b0", "#3a2257", 1.1]} visible={false} />
+      <hemisphereLight ref={light} args={["#f4efe4", "#2a2d33", 1.1]} visible={false} />
       <group ref={anchor} name="activity-bars" visible={false}>
         <group rotation={[0.62, 0, 0]}>
           <instancedMesh

@@ -13,8 +13,9 @@ const profile = {
 };
 
 const navLinks = [
-  { name: "About", link: "#about" },
+  { name: "Capillary", link: "#capillary" },
   { name: "Work", link: "#work" },
+  { name: "About", link: "#about" },
   { name: "Wins", link: "#wins" },
   { name: "Experience", link: "#experience" },
   { name: "Stack", link: "#stack" },
@@ -31,73 +32,102 @@ const about = {
   facts: [
     { term: "Based in", detail: "Bengaluru, Karnataka, India" },
     { term: "Now", detail: "SDE intern, Capillary Technologies" },
+    { term: "Leading", detail: "AI and campus digitalization, MIT AOE" },
     { term: "Studying", detail: "B.Tech CSE, MIT Academy of Engineering" },
   ],
 };
 
-// Magma ramp stops, shared by the hero cloud and the pipeline diagrams.
-const ramp = ["#3a2257", "#721f81", "#b5367a", "#f7845b", "#fcf3b0"];
+// Champagne ramp stops (graphite bronze → ivory), shared by the particle
+// cloud and the pipeline diagrams.
+const ramp = ["#3a3328", "#6b5536", "#8c6a3f", "#c9a96e", "#f4efe4"];
+
+// Capillary internship, from the résumé. No internal data beyond it.
+const capillary = {
+  org: "Capillary Technologies",
+  role: "Software Development Engineer Intern",
+  period: "Sep 2026 – present",
+  place: "Bangalore, onsite",
+  project: "Client Health Monitor",
+  lead: "One 0–10 health score for hundreds of enterprise clients, built from five systems that never used to talk to each other.",
+  points: [
+    "Combined New Relic, Jira, ServiceNow, Databricks and NPS data into a single 0–10 health score per client, with Python jobs loading into BigQuery and 11 Cloud Run jobs for SLA alerts.",
+    "Added Claude-based issue triage and client summaries in production. The model returns structured JSON, and every flagged issue passes a 3-step validation whose rules were set by backtesting on past data, because a false alarm here is costly.",
+    "Built “Ask CHM”, a chat interface for asking about client health in plain English, with multi-turn context and streamed responses.",
+    "Tuned a nightly LLM job for recurring failures with dual-run comparisons, cutting flagged issues from 48 to 35.",
+    "Access is secured with IAP roles; the codebase has 2,200+ automated tests and deploys through CI/CD.",
+  ],
+  metrics: [
+    { value: "0–10", label: "health score for every enterprise client" },
+    { value: "11", label: "Cloud Run jobs watching SLAs" },
+    { value: "27%", label: "fewer flagged issues (48 → 35)" },
+    { value: "2,200+", label: "automated tests, shipped through CI/CD" },
+  ],
+  stack: ["Claude", "Python", "BigQuery", "Databricks", "GCP Cloud Run", "IAP", "CI/CD"],
+};
 
 const projects = [
   {
-    id: "underwriteai",
-    name: "UnderwriteAI",
-    period: "Apr – Jul 2026",
+    id: "university",
+    name: "University Automation Platform",
+    shortName: "University platform",
+    award: "Smart India Hackathon 2025 — national winner, team lead",
+    period: "Sep 2025 – present",
     summary:
-      "A risk assessment platform that scores insurance applicants with a stacked ML ensemble and explains every decision in plain language.",
+      "A role-based platform that builds clash-free timetables for five degree programmes, and keeps growing into the university’s AI assistant.",
     problem:
-      "Manual underwriting takes weeks, and the reasoning behind a decision is hard for anyone to audit later.",
+      "Scheduling BSc, B.Ed, M.Ed, ITEP and FY programmes by hand means juggling faculty availability and rooms for every department, and redoing it whenever anything changes.",
     built: [
-      "A stacked ensemble — Random Forest and Gradient Boosting, with a Ridge meta-model trained via 5-fold CV — over 15+ engineered features from 6 data sources.",
-      "An OCR pipeline that extracts applicant data from 8 document types.",
-      "A RAG explanation layer (Llama 3.3 70B on Groq, LangChain + LangGraph) with fairness checks across gender and income groups.",
+      "Led the team that built the web app (Next.js 15, React 18, Flask) on Google OR-Tools, generating clash-free timetables from faculty availability and rooms.",
+      "A Gemini-powered coordinator-to-department workflow that gives each department 3 timetable options, with Excel and PDF export.",
+      "A rescheduling recommender that ranks free rooms at a given time, to move a lecture, swap faculty or shift a whole class.",
+      "Now: a RAG chatbot (embeddings + FAISS) that answers syllabus, exam and department questions from university documents, being tested on edge cases and cost.",
     ],
-    result: "Risk scores in seconds, each one shipped with an explanation an auditor can read.",
-    metric: { value: "15+", label: "engineered features from 6 data sources" },
-    pipeline: ["Applicant data + OCR", "15+ features", "RF + GB", "Ridge meta-model", "RAG explainer"],
-    stack: ["Next.js", "NextAuth", "MongoDB", "PyTorch", "XGBoost", "LangChain", "LangGraph", "Groq"],
-    image: "/images/projects/underwriteai.webp",
-    imageAlt: "UnderwriteAI landing page showing its five-stage system architecture: ingestion, feature engineering, stacked ensemble, explanation and output.",
-    live: "https://the-debuggers-theta.vercel.app",
-    source: "https://github.com/imjayeshjadhav/the-debuggers",
-  },
-  {
-    id: "timetable",
-    name: "Automated University Timetable Scheduler",
-    shortName: "Timetable",
-    award: "Smart India Hackathon 2025 — national winner",
-    period: "Sep – Dec 2025",
-    summary:
-      "Generates clash-free timetables for five degree programmes, so coordinators review options instead of building schedules by hand.",
-    problem:
-      "Scheduling BSc, B.Ed, M.Ed, ITEP and FY programmes by hand means juggling faculty availability and rooms across every department.",
-    built: [
-      "A constraint-satisfaction engine on Google OR-Tools that handles faculty availability, room allocation and clash-free slots at institute scale.",
-      "A role-based workflow from Institute Coordinator to Department Coordinator, built with Next.js 15 and Flask.",
-      "Gemini-assisted generation of 3 timetable options per department, with Excel and PDF export.",
-    ],
-    result: "Cut manual scheduling effort by nearly 70%, and won first place among 481 teams.",
-    metric: { value: "70%", label: "less manual scheduling effort" },
-    pipeline: ["Faculty, rooms, courses", "Constraints", "OR-Tools solver", "3 options / dept", "Excel + PDF"],
-    stack: ["Next.js 15", "React 18", "Tailwind v4", "Flask", "Google OR-Tools", "Gemini", "MongoDB", "NextAuth"],
-    image: null,
+    result: "Manual scheduling work dropped by about 70%, and the platform won first place among 481 teams.",
+    metric: { value: "70%", label: "less manual scheduling work" },
+    pipeline: ["Faculty, rooms, courses", "OR-Tools solver", "3 options / dept", "Rescheduling", "RAG assistant"],
+    stack: ["Next.js 15", "React 18", "Flask", "Google OR-Tools", "Gemini", "FAISS", "MongoDB"],
+    image: "/images/projects/university.webp",
+    imageAlt: "The University Automation Platform live site: an automated timetable scheduler with a sample weekly timetable marked 100% conflict free, 3 options.",
     live: "https://sih-2025.vercel.app",
     source: null,
+  },
+  {
+    id: "campuscompass",
+    name: "CampusCompass",
+    award: "AI and campus digitalization, MIT AOE — technical lead",
+    period: "2026",
+    summary:
+      "One connected platform for a whole college: automatic timetables, a walkable 3D campus, and the announcements, clubs and calendars that used to live in spreadsheets and group chats.",
+    problem:
+      "A college runs on ten disconnected tools. Timetables take days to build by hand, and new students can’t find their way around a large campus.",
+    built: [
+      "A timetable service in FastAPI on a CP-SAT solver (Google OR-Tools): upload one spreadsheet of faculty, subjects and rooms, get a full conflict-free weekly timetable by room, faculty or division.",
+      "An explorable 3D campus in Three.js with search, walking navigation and pathfinding between buildings and rooms.",
+      "Student, teacher and admin dashboards with announcements and polls, clubs, group chat, a faculty directory and a shared academic calendar.",
+    ],
+    result: "Timetables that took a person days now come back conflict-free in minutes.",
+    metric: { value: "Minutes", label: "for a full weekly timetable, down from days" },
+    pipeline: ["Excel upload", "CP-SAT solver", "Timetable API", "Dashboards", "3D campus"],
+    stack: ["Next.js 16", "Three.js", "FastAPI", "Google OR-Tools", "MongoDB", "NextAuth", "Tailwind CSS"],
+    image: null,
+    live: null,
+    source: null,
+    privateNote: "Built for MIT AOE with a team of four; the code is private to the college.",
   },
   {
     id: "threatlens",
     name: "ThreatLens AI",
     period: "Feb – Apr 2026",
     summary:
-      "Reads plain-English vulnerability descriptions and predicts their severity and CWE category.",
+      "A cybersecurity NLP framework that reads plain-English vulnerability descriptions and predicts their severity and CWE category.",
     problem:
-      "Security teams triage thousands of CVEs by hand, and the free-text descriptions don't map neatly onto severity or weakness type.",
+      "Security teams triage thousands of CVEs by hand, and the free-text descriptions don’t map neatly onto severity or weakness type.",
     built: [
-      "Trained and benchmarked SecureBERT, BERT, CNN, LSTM and GRU on 126K+ NVD CVE records, using time-based splits so evaluation reflects future CVEs.",
-      "A shared-model architecture that predicts severity and CWE category from one encoder.",
-      "A FastAPI inference service behind a React frontend.",
+      "Trained and compared SecureBERT, BERT, CNN, LSTM and GRU on 126K+ NVD CVE records, with time-based splits to avoid data leakage, preprocessing in Pandas and NumPy, and Scikit-learn for evaluation.",
+      "Moved to one shared multi-task model that predicts severity and CWE category from a single encoder.",
+      "Served it with FastAPI (PyTorch, Hugging Face Transformers) behind a React frontend for CVE triage.",
     ],
-    result: "About 8% higher F1 than training a separate model for each task.",
+    result: "About 8% higher F1 than separate per-task models.",
     metric: { value: "+8%", label: "F1 over separate models, on 126K+ CVEs" },
     pipeline: ["CVE description", "Tokenizer", "Shared encoder", "Severity + CWE heads", "FastAPI"],
     stack: ["PyTorch", "Hugging Face", "SecureBERT", "FastAPI", "React", "Scikit-learn", "Pandas"],
@@ -109,29 +139,28 @@ const projects = [
 ];
 
 const wins = [
-  {
-    rank: "1st",
-    of: "of 481 teams",
-    title: "Smart India Hackathon 2025",
-    note: "Team lead. India’s largest government hackathon.",
-  },
-  {
-    rank: "2nd",
-    of: "worldwide",
-    title: "NeoBIM Global Hackathon 2026",
-    note: "Team lead. International construction-tech hackathon.",
-  },
-  {
-    rank: "64th",
-    of: "of 18,500+ teams",
-    title: "Tata Elxsi Teleport S3",
-    note: "Round 2, top 0.35%.",
-  },
+  { rank: "1st", of: "of 481 teams", title: "Smart India Hackathon 2025", note: "Team lead. India’s largest government hackathon." },
+  { rank: "2nd", of: "worldwide", title: "NeoBIM Global Hackathon 2026", note: "Team lead. International construction-tech hackathon." },
+  { rank: "64th", of: "of 18,500+ teams", title: "Tata Elxsi Teleport S3", note: "Round 2, top 0.35%." },
   {
     rank: String(leetcode.solved.all),
     of: "problems solved",
     title: "LeetCode",
-    note: "Plus a 2-star CodeChef rating from regular Starters contests.",
+    note: "Graphs, DP, trees and greedy. Plus a 2-star CodeChef rating from regular Starters contests.",
+  },
+];
+
+const leadership = [
+  {
+    title: "Project Lead, AI and Campus Digitalization",
+    org: "MIT Academy of Engineering, current",
+    detail:
+      "Leading a cross-team student group on the university’s wider suite: syllabus and calendar planners, a campus engagement platform and a 3D college model. I handle planning, task allocation and delivery.",
+  },
+  {
+    title: "Class Representative",
+    org: "B.Tech Computer Science and Engineering, current",
+    detail: "The link between my class and the department, from timetables to exams.",
   },
 ];
 
@@ -143,7 +172,8 @@ const experience = [
     place: "Bangalore, onsite",
     logo: { src: "/images/experience/capillary.png", alt: "Capillary Technologies logo" },
     detail:
-      "Building client-specific web and application features on top of Capillary’s products — custom AI workflows, API integrations and automation — with engineering and Professional Services teams.",
+      "Building Client Health Monitor: one 0–10 health score for hundreds of enterprise clients, Claude-based issue triage with backtested validation, and the “Ask CHM” chat.",
+    link: { href: "#capillary", label: "Read the Capillary case study" },
   },
   {
     org: "Kumar Infotech",
@@ -151,8 +181,7 @@ const experience = [
     period: "May – Aug 2025",
     place: "Mumbai, hybrid",
     monogram: "KI",
-    detail:
-      "Built features in React, Next.js and Node.js, integrated REST APIs and reusable components, and shipped customer-facing updates in an agile team.",
+    detail: "Worked on customer-facing features in React.js, Next.js and Node.js, connected to REST APIs, in an agile team.",
   },
   {
     org: "MIT Academy of Engineering",
@@ -160,54 +189,56 @@ const experience = [
     period: "2023 – 2027",
     place: "Pune",
     logo: { src: "/images/experience/mitaoe.svg", alt: "MIT Academy of Engineering logo", wide: true },
-    detail: "CGPA 7.86 / 10, latest SGPA 8.43.",
+    detail: "CGPA 7.86 / 10, latest SGPA 8.43. Project Lead for AI and campus digitalization, and Class Representative.",
   },
 ];
 
 const skills = [
   {
-    group: "AI and machine learning",
-    short: "AI and ML",
-    items: ["PyTorch", "TensorFlow", "Scikit-learn", "Hugging Face Transformers", "LangChain", "LangGraph", "RAG", "Vector databases", "MCP", "NLP and embeddings", "Fine-tuning", "Google OR-Tools"],
+    group: "LLMs, agents and retrieval",
+    short: "LLMs and agents",
+    items: ["Claude / Gemini / Groq APIs", "Prompt engineering", "Tool use and function calling", "Structured outputs", "LangChain", "LangGraph", "MCP", "RAG", "Embeddings and semantic search", "FAISS", "Streaming", "LLM evaluation"],
   },
   {
-    group: "Web and app",
-    short: "Web",
-    items: ["React", "Next.js", "React Native", "Node.js", "Express", "FastAPI", "Flask", "GraphQL", "Tailwind CSS", "Redux / Zustand", "WebSockets", "SSR"],
+    group: "Backend, data and cloud",
+    short: "Backend and cloud",
+    items: ["Python", "FastAPI", "Flask", "Node.js / Express", "REST APIs", "SQL", "BigQuery", "Databricks", "MongoDB", "Docker", "GCP Cloud Run", "GitHub Actions", "Pytest", "Backtesting", "JWT / OAuth"],
   },
   {
-    group: "Languages",
-    short: "Languages",
-    items: ["Java", "C++", "Python", "JavaScript", "SQL"],
+    group: "Machine learning and NLP",
+    short: "ML and NLP",
+    items: ["PyTorch", "Hugging Face Transformers", "Scikit-learn", "TensorFlow", "CNN, RNN, Transformers", "Fine-tuning", "Model evaluation (F1, precision / recall)"],
   },
   {
-    group: "Data, cloud and tools",
-    short: "Tools",
-    items: ["MongoDB", "Docker", "GitHub Actions", "JWT / OAuth", "REST APIs", "Postman", "Vercel", "Git"],
+    group: "Languages and frontend",
+    short: "Languages and frontend",
+    items: ["Python", "SQL", "JavaScript", "Java", "C++", "React.js", "Next.js", "React Native", "Tailwind CSS", "WebSockets"],
   },
   {
-    group: "Foundations",
-    short: "Foundations",
-    items: ["Data structures and algorithms", "OOP", "DBMS", "Operating systems", "Computer networks"],
+    group: "CS fundamentals",
+    short: "Fundamentals",
+    items: ["Data structures and algorithms", "OOP", "Operating systems", "Computer networks", "DBMS", "System design"],
   },
 ];
 
-// Shown as floating 3D icons in the Stack section (models live in src/scene/iconModels.js).
+// Shown as 3D icons on the Stack ring (models live in src/scene/iconModels.js).
 const stackIcons = [
-  { id: "pytorch", label: "PyTorch", skill: "PyTorch" },
-  { id: "tensorflow", label: "TensorFlow", skill: "TensorFlow" },
-  { id: "huggingface", label: "Hugging Face", skill: "Hugging Face Transformers" },
+  { id: "claude", label: "Claude", skill: "Claude / Gemini / Groq APIs" },
   { id: "langchain", label: "LangChain", skill: "LangChain" },
+  { id: "pytorch", label: "PyTorch", skill: "PyTorch" },
+  { id: "huggingface", label: "Hugging Face", skill: "Hugging Face Transformers" },
   { id: "python", label: "Python", skill: "Python" },
   { id: "fastapi", label: "FastAPI", skill: "FastAPI" },
-  { id: "react", label: "React", skill: "React" },
+  { id: "bigquery", label: "BigQuery", skill: "BigQuery" },
+  { id: "databricks", label: "Databricks", skill: "Databricks" },
+  { id: "googlecloud", label: "Google Cloud", skill: "GCP Cloud Run" },
+  { id: "docker", label: "Docker", skill: "Docker" },
+  { id: "pytest", label: "Pytest", skill: "Pytest" },
+  { id: "react", label: "React", skill: "React.js" },
   { id: "nextjs", label: "Next.js", skill: "Next.js" },
-  { id: "node", label: "Node.js", skill: "Node.js" },
   { id: "java", label: "Java", skill: "Java" },
   { id: "cpp", label: "C++", skill: "C++" },
-  { id: "mongodb", label: "MongoDB", skill: "MongoDB" },
-  { id: "docker", label: "Docker", skill: "Docker" },
-  { id: "git", label: "Git", skill: "Git" },
+  { id: "git", label: "Git", skill: "GitHub Actions" },
 ];
 
 const socials = [
@@ -220,4 +251,4 @@ const socials = [
   { name: "X", url: "https://x.com/jjayeshhz" },
 ];
 
-export { profile, navLinks, about, ramp, projects, wins, experience, skills, stackIcons, socials };
+export { profile, navLinks, about, ramp, capillary, projects, wins, leadership, experience, skills, stackIcons, socials };

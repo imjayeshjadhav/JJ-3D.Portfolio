@@ -1,23 +1,25 @@
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,200..800&family=Geist:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..800,0..100&family=Geist:wght@300..700&display=swap");
 @import "tailwindcss";
 
 /*
-  Palette: sampled from matplotlib's "magma" colormap.
-  The ramp night → rose → ember → flame is reserved for things that carry
-  data (the hero cloud, timeline progress, pipeline stages). It is never
-  used as a decorative wash.
+  Graphite and champagne. Warm graphite surfaces, ivory text, and one
+  champagne-gold accent used sparingly: links, active states, figures.
+  The ramp bronze → gold → pale gold → ivory is reserved for things that
+  carry data (the particle cloud, timeline progress, pipeline stages).
 */
 @theme {
-  --color-night: #120a24;
-  --color-plum: #1e1238;
-  --color-rule: #3a2257;
-  --color-lilac: #d9cde8;
-  --color-dim: #a294b8;
-  --color-rose: #b5367a;
-  --color-ember: #f7845b;
-  --color-flame: #fcf3b0;
+  --color-ink: #0e0f11;
+  --color-surface: #16181c;
+  --color-raised: #1d2025;
+  --color-rule: #2a2d33;
+  --color-fg: #e9e4da;
+  --color-muted: #8e8a82;
+  --color-bronze: #8c6a3f;
+  --color-gold: #c9a96e;
+  --color-gold-soft: #e6d3a8;
+  --color-ivory: #f4efe4;
 
-  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
   --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
 
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
@@ -27,15 +29,15 @@
   --nav-h: 4.5rem;
   --ramp: linear-gradient(
     90deg,
-    var(--color-rose),
-    var(--color-ember),
-    var(--color-flame)
+    var(--color-bronze),
+    var(--color-gold),
+    var(--color-gold-soft)
   );
 }
 
 @layer base {
   html {
-    background-color: var(--color-night);
+    background-color: var(--color-ink);
     scroll-behavior: smooth;
     scroll-padding-top: var(--nav-h);
   }
@@ -49,8 +51,8 @@
   body {
     margin: 0;
     overflow-x: hidden;
-    background-color: var(--color-night);
-    color: var(--color-lilac);
+    background-color: var(--color-ink);
+    color: var(--color-fg);
     font-family: var(--font-sans);
     font-size: 1.0625rem;
     line-height: 1.6;
@@ -59,18 +61,19 @@
   }
 
   ::selection {
-    background: var(--color-rose);
-    color: var(--color-flame);
+    background: var(--color-gold);
+    color: var(--color-ink);
   }
 
   h1,
   h2,
   h3 {
     font-family: var(--font-display);
-    color: var(--color-flame);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
-    font-weight: 650;
+    font-variation-settings: "opsz" 144, "SOFT" 30;
+    color: var(--color-ivory);
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    font-weight: 500;
     text-wrap: balance;
   }
 
@@ -83,7 +86,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-ember);
+    outline: 2px solid var(--color-gold);
     outline-offset: 3px;
     border-radius: 4px;
   }
@@ -91,7 +94,7 @@
 
 @layer components {
   .shell {
-    @apply mx-auto w-full max-w-[1240px] px-4 sm:px-8 lg:px-12;
+    @apply mx-auto w-full max-w-[1560px] px-5 sm:px-8 lg:px-16 xl:px-20;
   }
 
   .section {
@@ -99,12 +102,11 @@
   }
 
   .section-title {
-    font-variation-settings: "wdth" 85;
     @apply text-4xl md:text-6xl;
   }
 
   .section-lede {
-    @apply mt-5 max-w-[56ch] text-lg text-dim;
+    @apply mt-5 max-w-[56ch] text-lg text-muted;
   }
 
   /* Buttons: one solid, one quiet. Labels say exactly what happens. */
@@ -112,27 +114,27 @@
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-[0.95rem] font-medium transition-colors duration-200;
   }
   .btn-solid {
-    @apply bg-flame text-night hover:bg-ember;
+    @apply bg-gold-soft text-ink hover:bg-gold;
   }
   .btn-quiet {
-    @apply border border-rule text-lilac hover:border-ember hover:text-flame;
+    @apply border border-rule text-fg hover:border-gold hover:text-gold-soft;
   }
 
   .text-link {
-    @apply underline decoration-rule decoration-1 underline-offset-4 transition-colors hover:text-flame hover:decoration-ember;
+    @apply underline decoration-rule decoration-1 underline-offset-4 transition-colors hover:text-gold-soft hover:decoration-gold;
   }
 
   .field {
-    @apply w-full rounded-lg border border-rule bg-night px-4 py-3 text-lilac placeholder:text-dim/60 transition-colors focus:border-ember focus:outline-none;
+    @apply w-full rounded-lg border border-rule bg-ink px-4 py-3 text-fg placeholder:text-muted/60 transition-colors focus:border-gold focus:outline-none;
   }
 }
 
 /* Hero name: the variable width axis does the work, not colour. */
 .hero-name {
-  font-variation-settings: "wdth" 75, "opsz" 96;
-  font-weight: 760;
-  letter-spacing: -0.015em;
-  line-height: 0.86;
+  font-variation-settings: "opsz" 144, "SOFT" 20;
+  font-weight: 450;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
 }
 
 .hero-name .line {
@@ -147,7 +149,7 @@
 
 /* Labels rendered by drei <Html> inside the hero canvas */
 .cluster-label {
-  @apply cursor-pointer whitespace-nowrap rounded-full border border-rule/80 bg-night/80 px-3 py-1 text-[0.8rem] font-medium text-lilac backdrop-blur-sm transition-colors hover:border-ember hover:text-flame;
+  @apply cursor-pointer whitespace-nowrap rounded-full border border-rule/80 bg-ink/80 px-3 py-1 text-[0.8rem] font-medium text-fg backdrop-blur-sm transition-colors hover:border-gold hover:text-gold-soft;
 }
 .cluster-label .dot {
   @apply mr-2 inline-block size-2 rounded-full align-middle;
@@ -161,7 +163,7 @@
 #wins p,
 #wins h3,
 .section-lede {
-  text-shadow: 0 0 14px var(--color-night), 0 0 4px var(--color-night);
+  text-shadow: 0 0 14px var(--color-ink), 0 0 4px var(--color-ink);
 }
 
 /* DOM stages that turn the 3D model drawn behind them. */
@@ -177,14 +179,14 @@ html.no-webgl .drag-stage {
   cursor: auto;
 }
 
-/* Project screenshots: magma duotone until the shot settles (Work.jsx
+/* Project screenshots: champagne duotone until the shot settles (Work.jsx
    scrubs --color 0 → 1) or the visitor hovers or focuses into the study. */
 .case-shot {
   --color: 0;
   --hover: 0;
 }
 .case-shot .duotone {
-  filter: url(#magma-duotone);
+  filter: url(#gold-duotone);
   opacity: calc(1 - max(var(--color), var(--hover)));
   transition: opacity 400ms ease;
   pointer-events: none;
@@ -201,9 +203,9 @@ html.no-webgl .drag-stage {
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--color-flame);
+  color: var(--color-gold-soft);
   opacity: 0;
-  text-shadow: 0 0 12px var(--color-night), 0 0 3px var(--color-night);
+  text-shadow: 0 0 12px var(--color-ink), 0 0 3px var(--color-ink);
   transition: opacity 200ms linear;
 }
 
@@ -216,10 +218,10 @@ html.no-webgl .drag-stage {
   white-space: nowrap;
   border: 1px solid var(--color-rule);
   border-radius: 6px;
-  background: var(--color-plum);
+  background: var(--color-surface);
   padding: 4px 8px;
   font-size: 0.78rem;
-  color: var(--color-lilac);
+  color: var(--color-fg);
   opacity: 0;
   transition: opacity 120ms ease;
 }
@@ -259,7 +261,7 @@ html.has-cursor[data-cursor-visible="true"] .cursor-layer {
   height: 6px;
   margin: -3px 0 0 -3px;
   border-radius: 999px;
-  background: var(--color-flame);
+  background: var(--color-gold-soft);
 }
 .cursor-ring {
   display: grid;
@@ -267,7 +269,7 @@ html.has-cursor[data-cursor-visible="true"] .cursor-layer {
   width: 30px;
   height: 30px;
   margin: -15px 0 0 -15px;
-  border: 1px solid color-mix(in srgb, var(--color-flame) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-gold-soft) 55%, transparent);
   border-radius: 999px;
   transition: width 220ms var(--ease-out-soft), height 220ms var(--ease-out-soft), margin 220ms var(--ease-out-soft),
     background-color 220ms ease, border-color 220ms ease, opacity 150ms ease;
@@ -276,14 +278,14 @@ html.has-cursor[data-cursor-visible="true"] .cursor-layer {
   width: 46px;
   height: 46px;
   margin: -23px 0 0 -23px;
-  border-color: var(--color-ember);
+  border-color: var(--color-gold);
 }
 .cursor-ring[data-state="label"] {
   width: 68px;
   height: 68px;
   margin: -34px 0 0 -34px;
   border-color: transparent;
-  background: var(--color-flame);
+  background: var(--color-gold-soft);
 }
 .cursor-ring[data-state="hidden"] {
   opacity: 0;
@@ -295,6 +297,6 @@ html.has-cursor[data-cursor-visible="true"] .cursor-layer {
 .cursor-label {
   font-size: 0.72rem;
   font-weight: 600;
-  color: var(--color-night);
+  color: var(--color-ink);
   letter-spacing: 0.01em;
 }

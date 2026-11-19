@@ -11,7 +11,7 @@ export function Room(props) {
   const { nodes, materials } = useGLTF("/models/optimized-room.glb");
   const matcapTexture = useTexture("/images/textures/mat1.png");
 
-  // Built once; colours come from the magma palette.
+  // Built once; colours come from the graphite and champagne palette.
   const {
     curtainMaterial,
     bodyMaterial,
@@ -22,13 +22,14 @@ export function Room(props) {
     chairMaterial,
   } = useMemo(
     () => ({
-      curtainMaterial: new THREE.MeshPhongMaterial({ color: "#b5367a" }),
-      bodyMaterial: new THREE.MeshPhongMaterial({ map: matcapTexture }),
-      tableMaterial: new THREE.MeshPhongMaterial({ color: "#3a2257" }),
-      radiatorMaterial: new THREE.MeshPhongMaterial({ color: "#fcf3b0" }),
-      compMaterial: new THREE.MeshStandardMaterial({ color: "#fcf3b0" }),
-      pillowMaterial: new THREE.MeshPhongMaterial({ color: "#f7845b" }),
-      chairMaterial: new THREE.MeshPhongMaterial({ color: "#1e1238" }),
+      curtainMaterial: new THREE.MeshPhongMaterial({ color: "#5a4630" }),
+      // Warm the cool matcap walls toward graphite and brass.
+      bodyMaterial: new THREE.MeshPhongMaterial({ map: matcapTexture, color: "#d8c3a0" }),
+      tableMaterial: new THREE.MeshPhongMaterial({ color: "#2a2d33" }),
+      radiatorMaterial: new THREE.MeshPhongMaterial({ color: "#e9e4da" }),
+      compMaterial: new THREE.MeshStandardMaterial({ color: "#e9e4da" }),
+      pillowMaterial: new THREE.MeshPhongMaterial({ color: "#c9a96e" }),
+      chairMaterial: new THREE.MeshPhongMaterial({ color: "#16181c" }),
     }),
     [matcapTexture]
   );
@@ -36,7 +37,7 @@ export function Room(props) {
   // The monitors glow in the ramp instead of the model's default cyan.
   // Unlit and not tone-mapped, so they read as bright without a bloom pass.
   const screenMaterial = useMemo(
-    () => new THREE.MeshBasicMaterial({ color: new THREE.Color("#f7845b").multiplyScalar(1.6), toneMapped: false }),
+    () => new THREE.MeshBasicMaterial({ color: new THREE.Color("#e6d3a8").multiplyScalar(1.35), toneMapped: false }),
     []
   );
 

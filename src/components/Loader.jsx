@@ -55,23 +55,23 @@ const Loader = () => {
     <div
       role="status"
       aria-live="polite"
-      className={`fixed inset-0 z-[80] flex flex-col items-center justify-center bg-night transition-opacity duration-[450ms] ${
+      className={`fixed inset-0 z-[80] flex flex-col items-center justify-center bg-ink transition-opacity duration-[450ms] ${
         phase === "leaving" ? "opacity-0" : "opacity-100"
       }`}
     >
       <p className="sr-only">Loading the 3D scene</p>
       <p
         aria-hidden="true"
-        className="font-display text-7xl font-bold tabular-nums text-flame"
-        style={{ fontVariationSettings: '"wdth" 75' }}
+        className="font-display text-7xl font-medium tabular-nums text-gold-soft"
+        style={{ fontVariationSettings: '"opsz" 144' }}
       >
         <span ref={number}>0</span>
-        <span className="text-3xl text-ember">%</span>
+        <span className="text-3xl text-gold">%</span>
       </p>
       <div aria-hidden="true" className="mt-6 h-[2px] w-48 overflow-hidden rounded-full bg-rule">
         <div ref={bar} className="size-full origin-left" style={{ background: "var(--ramp)", transform: "scaleX(0)" }} />
       </div>
-      <p aria-hidden="true" className="mt-4 text-sm text-dim">
+      <p aria-hidden="true" className="mt-4 text-sm text-muted">
         Loading the scene
       </p>
     </div>

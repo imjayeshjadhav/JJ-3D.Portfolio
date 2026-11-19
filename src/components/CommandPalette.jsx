@@ -102,13 +102,13 @@ const CommandPalette = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[75] bg-night/70 px-4 pt-[14vh] backdrop-blur-sm" onMouseDown={close}>
+    <div className="fixed inset-0 z-[75] bg-ink/70 px-4 pt-[14vh] backdrop-blur-sm" onMouseDown={close}>
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Command palette"
         onMouseDown={(e) => e.stopPropagation()}
-        className="mx-auto w-full max-w-xl overflow-hidden rounded-2xl border border-rule bg-plum shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]"
+        className="mx-auto w-full max-w-xl overflow-hidden rounded-2xl border border-rule bg-surface shadow-[0_30px_80px_-20px_rgba(0,0,0,0.7)]"
       >
         <div aria-hidden="true" className="h-[2px]" style={{ background: "var(--ramp)" }} />
         <input
@@ -123,7 +123,7 @@ const CommandPalette = () => {
           aria-label="Search commands"
           aria-controls="palette-results"
           aria-activedescendant={results[active] ? `palette-item-${active}` : undefined}
-          className="w-full border-b border-rule bg-transparent px-5 py-4 text-lg text-flame placeholder:text-dim/70 focus:outline-none"
+          className="w-full border-b border-rule bg-transparent px-5 py-4 text-lg text-gold-soft placeholder:text-muted/70 focus:outline-none"
         />
         <ul id="palette-results" role="listbox" className="max-h-[50vh] overflow-y-auto p-2">
           {results.map((c, i) => (
@@ -135,18 +135,18 @@ const CommandPalette = () => {
               onMouseEnter={() => setActive(i)}
               onClick={() => run(c)}
               className={`flex min-h-11 cursor-pointer items-center justify-between gap-4 rounded-lg px-3 ${
-                i === active ? "bg-night text-flame" : "text-lilac"
+                i === active ? "bg-ink text-gold-soft" : "text-fg"
               }`}
             >
               <span>{c.label}</span>
-              <span className="truncate text-xs text-dim">{c.hint}</span>
+              <span className="truncate text-xs text-muted">{c.hint}</span>
             </li>
           ))}
           {results.length === 0 && (
-            <li className="px-3 py-4 text-sm text-dim">No match. Try “work”, “email” or “résumé”.</li>
+            <li className="px-3 py-4 text-sm text-muted">No match. Try “work”, “email” or “résumé”.</li>
           )}
         </ul>
-        <p className="border-t border-rule px-5 py-2 text-xs text-dim">↑ ↓ to move, Enter to run, Esc to close</p>
+        <p className="border-t border-rule px-5 py-2 text-xs text-muted">↑ ↓ to move, Enter to run, Esc to close</p>
       </div>
     </div>
   );

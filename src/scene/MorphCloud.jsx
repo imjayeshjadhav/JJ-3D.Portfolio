@@ -3,7 +3,6 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 
-import { projects } from "../constants";
 import store, { FORMATIONS, INTRO_SECONDS, rectToWorld, ringFromRect, worldPerPixel } from "./store";
 import { buildFormations, CONSTELLATION, HERO_CLUSTERS, helixNodes, PIPELINE_ANCHORS } from "./formations";
 import { createCloudMaterial } from "./cloudMaterial";
@@ -17,10 +16,12 @@ const RESTING_INTENSITY = {
   hero: 1,
   about: 0.85,
   activity: 0.5,
-  "work-underwriteai": 0.32,
-  "work-timetable": 0.32,
-  "work-threatlens": 0.32,
-  wins: 0.45,
+  capillary: 0.6,
+  "capillary-detail": 0.3,
+  "work-university": 0.25,
+  "work-campuscompass": 0.25,
+  "work-threatlens": 0.25,
+  wins: 0.55,
   experience: 0.75,
   stack: 0.9,
   contact: 0.8,
@@ -31,8 +32,10 @@ const RESTING_INTENSITY = {
 const MOBILE_INTENSITY = {
   about: 0.4,
   activity: 0.35,
-  "work-underwriteai": 0.3,
-  "work-timetable": 0.3,
+  capillary: 0.35,
+  "capillary-detail": 0.25,
+  "work-university": 0.3,
+  "work-campuscompass": 0.3,
   "work-threatlens": 0.3,
   wins: 0.35,
   experience: 0.45,
@@ -45,8 +48,9 @@ const MOBILE_INTENSITY = {
 const MORPH_WINDOW = {
   default: [1, 0.55],
   about: [0.8, 0.35],
-  "work-underwriteai": [0.7, 0.28],
-  "work-timetable": [0.7, 0.28],
+  capillary: [0.85, 0.35],
+  "work-university": [0.7, 0.28],
+  "work-campuscompass": [0.7, 0.28],
   "work-threatlens": [0.7, 0.28],
 };
 
@@ -61,8 +65,9 @@ const FORMATION_LABELS = {
 // Formations zig-zag across the page as you scroll: -1 left, 1 right.
 const SIDE = {
   about: -1, // y is lowered below so the title stays clear
-  "work-underwriteai": 1,
-  "work-timetable": -1,
+  capillary: 1,
+  "work-university": 1,
+  "work-campuscompass": -1,
   "work-threatlens": 1,
   wins: 0,
 };
@@ -108,6 +113,8 @@ const computeLayout = (width, height) => {
   };
   for (const [key, dir] of Object.entries(SIDE)) offsets[key] = [dir * side, 0, 0];
   offsets.stack = [ring.x - center[0], ring.y - center[1], 0];
+  // Wins: a small podium beside the title, clear of the figures below it.
+  if (!mobile) offsets.wins = [halfW * 0.5, halfHeight * 0.42, 0];
   if (!mobile) offsets.about[1] = -0.7;
 
   return {
@@ -139,6 +146,7 @@ const MorphCloud = () => {
   const labelRefs = useRef([]);
   const pair = useRef({ from: null, to: null });
   const intro = useRef(0);
+  const introStart = useRef(null);
   const shownMix = useRef(0);
   const anchors = useRef([]);
   const stage = useRef(null);
@@ -203,8 +211,13 @@ const MorphCloud = () => {
     if (!store.introDone) {
       // Capped so a slow first frame (shader compile) can't skip the sequence.
       // The clock starts when the loader hands over.
-      if (store.loaderDone) intro.current += Math.min(delta, 1 / 30);
-      if (reduced || window.scrollY > 40 || intro.current >= INTRO_SECONDS) store.introDone = true;
+      if (store.loaderDone) {
+        intro.current += Math.min(delta, 1 / 30);
+        introStart.current ??= performance.now();
+      }
+      // Slow devices: finish on wall-clock time even if frames are scarce.
+      const overdue = introStart.current && performance.now() - introStart.current > INTRO_SECONDS * 1500;
+      if (reduced || window.scrollY > 40 || overdue || intro.current >= INTRO_SECONDS) store.introDone = true;
     }
     const inIntro = !store.introDone;
     const introP = inIntro ? intro.current / INTRO_SECONDS : 1;
@@ -317,7 +330,7 @@ const MorphCloud = () => {
 
   const goTo = (id) => {
     document
-      .getElementById(`work-${id}`)
+      .getElementById(id)
       ?.scrollIntoView({ behavior: store.reducedMotion ? "auto" : "smooth" });
   };
 
@@ -326,11 +339,10 @@ const MorphCloud = () => {
     <group ref={group} position={layout.center} name="morph-cloud">
       <points geometry={geometry} material={material} frustumCulled={false} name="cloud-points" />
 
-      {projects.map((project, k) => {
-        const c = HERO_CLUSTERS[project.id];
+      {HERO_CLUSTERS.map(({ target, label, position: c }, k) => {
         return (
           <Html
-            key={project.id}
+            key={target}
             position={[
               h[0] + c[0] * layout.heroScale * layout.heroSquash,
               h[1] + (c[1] + 1.6) * layout.heroScale,
@@ -344,10 +356,10 @@ const MorphCloud = () => {
               ref={(el) => (labelRefs.current[k] = el)}
               type="button"
               className="cluster-label"
-              onClick={() => goTo(project.id)}
+              onClick={() => goTo(target)}
             >
-              <span className="dot bg-flame" aria-hidden="true" />
-              {project.shortName ?? project.name}
+              <span className="dot bg-gold" aria-hidden="true" />
+              {label}
             </button>
           </Html>
         );

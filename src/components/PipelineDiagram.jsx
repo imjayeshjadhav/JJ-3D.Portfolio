@@ -1,7 +1,7 @@
 import { ramp } from "../constants";
 import store from "../scene/store";
 
-// Stage colour climbs the magma ramp from input to output, so colour
+// Stage colour climbs the champagne ramp from input to output, so colour
 // carries meaning: how far along the pipeline a stage sits. Work.jsx lights
 // the stages one by one as the case study scrolls through, and pointing at
 // a stage lights the matching part of the particle shape behind it.
@@ -23,7 +23,7 @@ const PipelineDiagram = ({ stages, label, formation }) => {
             onPointerLeave={clear}
             onFocus={point(i)}
             onBlur={clear}
-            className="pipeline-stage flex min-h-12 items-center rounded-md border px-3 py-2 text-sm leading-snug text-lilac transition-colors [overflow-wrap:anywhere] hover:bg-plum focus-visible:bg-plum"
+            className="pipeline-stage flex min-h-12 items-center rounded-md border px-3 py-2 text-sm leading-snug text-fg transition-colors [overflow-wrap:anywhere] hover:bg-surface focus-visible:bg-surface"
             style={{ borderColor: color, boxShadow: `inset 0 3px 0 ${color}` }}
           >
             <span className="sr-only">Step {i + 1}: </span>

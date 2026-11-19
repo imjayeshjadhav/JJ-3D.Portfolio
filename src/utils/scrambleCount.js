@@ -8,9 +8,11 @@ gsap.registerPlugin(ScrollTrigger);
 // The element's data-value holds the final text. Call inside a GSAP context.
 const scrambleCount = (el, { delay = 0 } = {}) => {
   const final = el.dataset.value;
-  const [, prefix = "", num = "", suffix = ""] = final.match(/^(\D*)(\d+)(.*)$/) ?? [];
+  // Digits may carry thousands separators, as in "2,200+".
+  const [, prefix = "", num = "", suffix = ""] = final.match(/^(\D*)(\d[\d,]*)(.*)$/) ?? [];
   if (!num) return null;
-  const target = Number(num);
+  const target = Number(num.replace(/,/g, ""));
+  const format = (n) => (num.includes(",") ? n.toLocaleString("en-US") : String(n));
   const state = { v: 0 };
   return gsap.to(state, {
     v: target,
@@ -21,8 +23,8 @@ const scrambleCount = (el, { delay = 0 } = {}) => {
     onUpdate() {
       const digits =
         this.progress() < 0.55
-          ? Array.from(num, () => Math.floor(Math.random() * 10)).join("")
-          : String(Math.round(state.v));
+          ? Array.from(num, (c) => (c === "," ? c : Math.floor(Math.random() * 10))).join("")
+          : format(Math.round(state.v));
       el.textContent = prefix + digits + suffix;
     },
     onComplete: () => {

@@ -32,11 +32,13 @@ export const ringFromRect = (rect, width, height) => {
 // Section order the cloud morphs through; matches data-formation attributes.
 export const FORMATIONS = [
   "hero",
+  "capillary",
+  "capillary-detail",
+  "work-university",
+  "work-campuscompass",
+  "work-threatlens",
   "about",
   "activity",
-  "work-underwriteai",
-  "work-timetable",
-  "work-threatlens",
   "wins",
   "experience",
   "stack",

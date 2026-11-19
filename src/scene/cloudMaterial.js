@@ -25,11 +25,11 @@ const vertexShader = /* glsl */ `
   varying float vAlpha;
 
   vec3 ramp(float t) {
-    vec3 c0 = vec3(0.227, 0.133, 0.341); // #3a2257
-    vec3 c1 = vec3(0.447, 0.122, 0.506); // #721f81
-    vec3 c2 = vec3(0.710, 0.212, 0.478); // #b5367a
-    vec3 c3 = vec3(0.969, 0.518, 0.357); // #f7845b
-    vec3 c4 = vec3(0.988, 0.953, 0.690); // #fcf3b0
+    vec3 c0 = vec3(0.227, 0.200, 0.157); // #3a3328
+    vec3 c1 = vec3(0.420, 0.333, 0.212); // #6b5536
+    vec3 c2 = vec3(0.549, 0.416, 0.247); // #8c6a3f
+    vec3 c3 = vec3(0.788, 0.663, 0.431); // #c9a96e
+    vec3 c4 = vec3(0.957, 0.937, 0.894); // #f4efe4
     t = clamp(t, 0.0, 1.0) * 4.0;
     if (t < 1.0) return mix(c0, c1, t);
     if (t < 2.0) return mix(c1, c2, t - 1.0);

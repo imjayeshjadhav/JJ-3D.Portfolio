@@ -9,7 +9,7 @@ const Navbar = () => {
   const [active, setActive] = useState(null);
   const progress = useRef(null);
 
-  // Scrolled state, plus a progress line that fills along the magma ramp.
+  // Scrolled state, plus a progress line that fills along the champagne ramp.
   useEffect(() => {
     let frame = 0;
     const onScroll = () => {
@@ -62,13 +62,13 @@ const Navbar = () => {
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
-        solid ? "border-b border-rule/70 bg-night/85 backdrop-blur-md" : "border-b border-transparent"
+        solid ? "border-b border-rule/70 bg-ink/85 backdrop-blur-md" : "border-b border-transparent"
       }`}
     >
       <nav className="shell flex h-[var(--nav-h)] items-center justify-between" aria-label="Main">
         <a
           href="#top"
-          className="font-display text-2xl font-bold tracking-tight text-flame"
+          className="font-display text-2xl font-medium tracking-tight text-gold-soft"
           aria-label="Jayesh Jadhav, back to top"
         >
           JJ
@@ -80,14 +80,14 @@ const Navbar = () => {
               <a
                 href={link}
                 aria-current={active === link ? "true" : undefined}
-                className={`relative text-[0.95rem] transition-colors hover:text-flame ${
-                  active === link ? "text-flame" : "text-dim"
+                className={`relative text-[0.95rem] transition-colors hover:text-gold-soft ${
+                  active === link ? "text-gold-soft" : "text-muted"
                 }`}
               >
                 {name}
                 <span
                   aria-hidden="true"
-                  className={`absolute -bottom-2 left-1/2 size-1 -translate-x-1/2 rounded-full bg-ember transition-opacity ${
+                  className={`absolute -bottom-2 left-1/2 size-1 -translate-x-1/2 rounded-full bg-gold transition-opacity ${
                     active === link ? "opacity-100" : "opacity-0"
                   }`}
                 />
@@ -100,7 +100,7 @@ const Navbar = () => {
           <button
             type="button"
             onClick={() => window.dispatchEvent(new Event("palette:open"))}
-            className="hidden min-h-9 items-center gap-2 rounded-full border border-rule px-3 text-sm text-dim transition-colors hover:border-ember hover:text-flame xl:inline-flex"
+            className="hidden min-h-9 items-center gap-2 rounded-full border border-rule px-3 text-sm text-muted transition-colors hover:border-gold hover:text-gold-soft xl:inline-flex"
           >
             Jump to
             <kbd className="rounded border border-rule px-1.5 font-sans text-xs">{PALETTE_KEY}</kbd>
@@ -110,7 +110,7 @@ const Navbar = () => {
           </a>
           <button
             type="button"
-            className="inline-flex size-11 items-center justify-center rounded-full border border-rule text-lilac lg:hidden"
+            className="inline-flex size-11 items-center justify-center rounded-full border border-rule text-fg lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
@@ -142,7 +142,7 @@ const Navbar = () => {
                   href={link}
                   onClick={() => setOpen(false)}
                   aria-current={active === link ? "true" : undefined}
-                  className={`block py-5 font-display text-3xl ${active === link ? "text-ember" : "text-flame"}`}
+                  className={`block py-5 font-display text-3xl ${active === link ? "text-gold" : "text-ivory"}`}
                 >
                   {name}
                 </a>

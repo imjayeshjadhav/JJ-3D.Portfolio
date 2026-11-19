@@ -2,11 +2,11 @@
 // has no public deployment to screenshot. Each programme gets a ramp colour;
 // no cell holds two programmes, which is the point of the solver.
 const programmes = [
-  { code: "BSc", color: "#721f81" },
-  { code: "B.Ed", color: "#b5367a" },
-  { code: "M.Ed", color: "#e0526a" },
-  { code: "ITEP", color: "#f7845b" },
-  { code: "FY", color: "#fcf3b0" },
+  { code: "BSc", color: "#5a4630" },
+  { code: "B.Ed", color: "#8c6a3f" },
+  { code: "M.Ed", color: "#a88a57" },
+  { code: "ITEP", color: "#c9a96e" },
+  { code: "FY", color: "#e6d3a8" },
 ];
 const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const periods = ["9:00", "10:00", "11:00", "12:00", "Lunch", "2:00", "3:00"];
@@ -25,16 +25,16 @@ const TimetableVisual = () => (
   <div
     role="img"
     aria-label="Sample week of a generated timetable: six days by six teaching periods plus lunch, each slot assigned to one of BSc, B.Ed, M.Ed, ITEP or FY with no clashes."
-    className="flex aspect-[16/10] w-full flex-col justify-center bg-plum p-4 sm:p-8"
+    className="flex aspect-[16/10] w-full flex-col justify-center bg-surface p-4 sm:p-8"
   >
     <div className="grid grid-cols-[3rem_repeat(6,1fr)] gap-1 text-[0.65rem] sm:gap-1.5 sm:text-xs" aria-hidden="true">
       <span />
       {days.map((d) => (
-        <span key={d} className="pb-1 text-center text-dim">{d}</span>
+        <span key={d} className="pb-1 text-center text-muted">{d}</span>
       ))}
       {periods.map((time, p) => (
         <div key={time} className="contents">
-          <span className="self-center text-dim">{time}</span>
+          <span className="self-center text-muted">{time}</span>
           {days.map((d, di) => {
             const c = cell(di, p);
             if (c === "lunch")
@@ -43,7 +43,7 @@ const TimetableVisual = () => (
               <span
                 key={d}
                 className="flex h-6 items-center justify-center rounded-sm font-medium sm:h-9"
-                style={c ? { background: c.color, color: c.code === "FY" || c.code === "ITEP" ? "#120a24" : "#fcf3b0" } : { border: "1px solid #3a2257" }}
+                style={c ? { background: c.color, color: c.code === "BSc" ? "#f4efe4" : "#0e0f11" } : { border: "1px solid #2a2d33" }}
               >
                 {c?.code}
               </span>

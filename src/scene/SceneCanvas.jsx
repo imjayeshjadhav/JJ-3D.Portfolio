@@ -42,8 +42,8 @@ const SceneCanvas = () => {
         dpr={dpr}
         gl={{ antialias: true, powerPreference: "high-performance" }}
       >
-        <color attach="background" args={["#120a24"]} />
-        <ambientLight intensity={0.35} color="#3a2257" />
+        <color attach="background" args={["#0e0f11"]} />
+        <ambientLight intensity={0.35} color="#2a2d33" />
         <LoadProgress />
         <PerformanceMonitor onIncline={() => setDpr(1.75)} onDecline={() => setDpr(1)} />
         <Suspense fallback={null}>
