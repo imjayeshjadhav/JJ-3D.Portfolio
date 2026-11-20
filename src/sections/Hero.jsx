@@ -6,7 +6,6 @@ import { profile } from "../constants";
 import leetcode from "../data/leetcode.json";
 import useMediaQuery from "../hooks/useMediaQuery";
 import useDragRotate from "../hooks/useDragRotate";
-import store from "../scene/store";
 
 const HEADLINE = [
   "I build production AI systems:",
@@ -33,14 +32,6 @@ const Hero = ({ webgl }) => {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Waits for the loader to lift, then rises as the cloud lands on the room.
-        const intro = gsap
-          .timeline({ paused: !store.loaderDone, delay: 0.5, defaults: { ease: "power4.out" } })
-          .from(".line > span", { yPercent: 110, duration: 1.2, stagger: 0.1 })
-          .from(".hero-copy", { opacity: 0, y: 16, duration: 0.8, stagger: 0.08 }, "-=0.8");
-        const play = () => intro.restart(true); // true: keep the delay
-        window.addEventListener("scene:ready", play, { once: true });
-
         // Scrolling away, the headline lifts off and fades.
         gsap.to(".hero-headline", {
           yPercent: -25,
@@ -48,7 +39,6 @@ const Hero = ({ webgl }) => {
           ease: "none",
           scrollTrigger: { trigger: scope.current, start: "top top", end: "bottom top", scrub: 0.4 },
         });
-        return () => window.removeEventListener("scene:ready", play);
       });
       return () => mm.revert();
     },
@@ -56,40 +46,42 @@ const Hero = ({ webgl }) => {
   );
 
   return (
-    <section id="top" ref={scope} data-formation="hero" className="relative lg:min-h-[100svh]">
+    <section id="top" ref={scope} className="relative lg:min-h-[100svh]">
       <div className="shell pointer-events-none relative z-10 flex flex-col pt-[calc(var(--nav-h)+2.5rem)] lg:min-h-[100svh] lg:pt-[var(--nav-h)]">
         <div className="pointer-events-auto lg:my-auto lg:w-[52%]">
-          <p className="hero-copy max-w-[44ch] text-muted">
+          <p data-build="intro" className="max-w-[44ch] text-muted">
             <span className="text-fg">{profile.name}</span>, software development engineer intern at Capillary
             Technologies in Bengaluru.
           </p>
 
           <h1 className="hero-headline hero-name mt-6 text-[clamp(2.4rem,4.3vw,4.15rem)]">
-            {HEADLINE.map((line) => (
+            {HEADLINE.map((line, i) => (
               <span key={line} className="line">
-                <span>{line}</span>
+                <span data-build={`line-${i}`}>{line}</span>
               </span>
             ))}
           </h1>
 
-          <p className="hero-copy mt-7 max-w-[46ch] text-lg text-muted">
+          <p data-build="sub" className="mt-7 max-w-[46ch] text-lg text-muted">
             Final-year computer science at MIT Academy of Engineering, and team lead of the Smart India
             Hackathon 2025 national winners.
           </p>
 
-          <div className="hero-copy mt-9 flex flex-wrap gap-3">
-            <a href="#capillary" data-magnetic className="btn btn-solid">See the Capillary work</a>
-            <a href={profile.resume} download data-magnetic className="btn btn-quiet">Download résumé</a>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <a href="#capillary" data-magnetic data-build="cta-0" className="btn btn-solid">See the Capillary work</a>
+            <a href={profile.resume} download data-magnetic data-build="cta-1" className="btn btn-quiet">Download résumé</a>
           </div>
         </div>
 
         {/* Proof strip: the claims above, made checkable. */}
-        <dl className="hero-copy pointer-events-auto mt-14 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-rule pt-6 pb-8 lg:mt-0 lg:grid-cols-4">
-          {PROOF.map(({ value, label }) => (
+        <dl data-build="proof" className="pointer-events-auto mt-14 grid grid-cols-2 gap-x-6 gap-y-6 border-t border-rule pt-6 pb-8 lg:mt-0 lg:grid-cols-4">
+          {PROOF.map(({ value, label }, i) => (
             <div key={label}>
               <dt className="sr-only">{label}</dt>
               <dd>
                 <span
+                  data-build={`fig-${i}`}
+                  data-value={value}
                   className="block font-display text-3xl font-medium text-gold-soft md:text-4xl"
                   style={{ fontVariationSettings: '"opsz" 144' }}
                 >
@@ -108,6 +100,7 @@ const Hero = ({ webgl }) => {
       <div
         id="hero-stage"
         ref={stage}
+        data-build="stage"
         {...(webgl && {
           "data-cursor": "drag",
           tabIndex: 0,
@@ -119,13 +112,13 @@ const Hero = ({ webgl }) => {
         {!webgl && (
           <img
             src="/images/hero-fallback.webp"
-            alt="A desk setup inside a point cloud, with labelled clusters for each featured project."
+            alt="A 3D desk setup with a monitor, keyboard and chair."
             className="size-full object-cover"
           />
         )}
         {webgl && (
-          <p className="hero-copy pointer-events-none absolute bottom-3 right-4 text-sm text-muted sm:right-8 lg:right-12">
-            {isTouch ? "Swipe sideways to turn the room." : "Drag to turn the room. Select a label to jump to that work."}
+          <p className="pointer-events-none absolute bottom-3 right-4 text-sm text-muted sm:right-8 lg:right-12">
+            {isTouch ? "Swipe sideways to turn the room." : "Drag to turn the room."}
           </p>
         )}
       </div>

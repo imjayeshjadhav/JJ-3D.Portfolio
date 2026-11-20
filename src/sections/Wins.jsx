@@ -21,7 +21,7 @@ const Wins = () => {
   );
 
   return (
-    <section id="wins" ref={scope} data-formation="wins" className="py-32 md:py-48">
+    <section id="wins" ref={scope} className="py-32 md:py-48">
       <div className="shell">
         <h2 className="section-title">Wins and leadership</h2>
 
@@ -46,7 +46,7 @@ const Wins = () => {
           ))}
         </ol>
 
-        <ul className="mt-20 grid gap-x-8 gap-y-10 border-t border-rule pt-10 md:grid-cols-2">
+        <ul className="wins-lead mt-20 grid gap-x-8 gap-y-10 border-t border-rule pt-10 md:grid-cols-2">
           {leadership.map((role) => (
             <li key={role.title}>
               <h3 className="text-2xl md:text-3xl">{role.title}</h3>

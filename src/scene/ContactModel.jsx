@@ -9,8 +9,7 @@ import { applyEnvMap, useEnvMap } from "./envMap";
 
 const URL = "/models/computer-optimized-transformed.glb";
 
-// The desk, computer and chair, pinned to #contact-stage beside the form.
-// The particle cloud forms orbit rings around it.
+// The desk, computer and chair, pinned to #contact-stage beside the contact links.
 const ContactModel = () => {
   const anchor = useRef();
   const turn = useRef();

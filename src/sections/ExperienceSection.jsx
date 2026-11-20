@@ -59,16 +59,6 @@ const ExperienceSection = () => {
               scrollTrigger: { trigger: item, start: "top 90%", end: "top 55%", scrub: 0.5 },
             }
           );
-          gsap.fromTo(
-            item.querySelector(".exp-body"),
-            { x: 40, opacity: 0.2 },
-            {
-              x: 0,
-              opacity: 1,
-              ease: "none",
-              scrollTrigger: { trigger: item, start: "top 88%", end: "top 55%", scrub: 0.5 },
-            }
-          );
         });
       });
       return () => mm.revert();
@@ -80,15 +70,14 @@ const ExperienceSection = () => {
     <section
       id="experience"
       ref={scope}
-      data-formation="experience"
-      className="border-t border-rule/60 pb-24 pt-20 md:pb-36 md:pt-28"
+      className="overflow-x-clip border-t border-rule/60 pb-24 pt-20 md:pb-36 md:pt-28"
     >
       <div className="shell grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-[calc(var(--nav-h)+2rem)]">
             <h2 className="section-title">Experience</h2>
             <p className="section-lede">
-              The helix behind this list is the same timeline: each bright node is one of these roles.
+              Where I&apos;ve worked and studied, most recent first.
             </p>
           </div>
         </div>

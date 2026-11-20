@@ -22,6 +22,13 @@
     <meta property="og:image" content="https://jj-portfolio-ten.vercel.app/images/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    <!-- Start with the hero hidden so the build intro
+         (src/components/BuildIntro.jsx) can assemble it without a flash. -->
+    <script>
+      try {
+        if (!matchMedia("(prefers-reduced-motion: reduce)").matches) document.documentElement.classList.add("building");
+      } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>

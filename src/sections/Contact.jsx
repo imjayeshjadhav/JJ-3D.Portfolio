@@ -12,7 +12,7 @@ const Contact = () => {
   useDragRotate(stage, "contact");
 
   return (
-    <section id="contact" data-formation="contact" className="section border-t border-rule/60">
+    <section id="contact" className="section border-t border-rule/60">
       <div className="shell grid gap-12 lg:grid-cols-12 lg:items-center">
         <div className="lg:col-span-5">
           <h2 className="section-title">Get in touch</h2>
@@ -35,7 +35,7 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* The shared scene draws the 3D desk here, ringed by the point cloud. */}
+        {/* The shared scene draws the 3D desk here. */}
         <div
           id="contact-stage"
           ref={stage}

@@ -3,17 +3,14 @@
 const store = {
   velocity: 0, // smoothed scroll velocity from Lenis, px per frame
   reducedMotion: false,
-  // Load sequence: the cloud converges on the room; 0..1, then done.
+  // Build intro: 0..1 as the room is placed into its frame.
   introProgress: 0,
-  introDone: false,
   // Rotation the visitor has dragged into each 3D model, in radians.
   drag: { hero: { x: 0, y: 0 }, contact: { x: 0, y: 0 } },
   // Stack carousel: scroll position (in icons), manual nudges, and the
   // icon currently at the front.
   ring: { scroll: 0, offset: 0, front: 0 },
-  // A hovered pipeline stage: { key: formation, index: stage } or null.
-  stageSpot: null,
-  // Loader hand-off.
+  // Build intro hand-off: the room loads while the crew builds the page.
   loadProgress: 0,
   sceneReady: false,
   loaderDone: false,
@@ -28,24 +25,6 @@ export const ringFromRect = (rect, width, height) => {
   const iconSize = Math.min(rect.height * 0.3, rect.width * (narrow ? 0.13 : 0.17)) * w.wpp;
   return { x: w.x, y: w.y, radius, iconSize, wpp: w.wpp };
 };
-
-// Section order the cloud morphs through; matches data-formation attributes.
-export const FORMATIONS = [
-  "hero",
-  "capillary",
-  "capillary-detail",
-  "work-university",
-  "work-campuscompass",
-  "work-threatlens",
-  "about",
-  "activity",
-  "wins",
-  "experience",
-  "stack",
-  "contact",
-];
-
-export const INTRO_SECONDS = 2.4;
 
 // The scene camera never moves, so DOM rects map to the z = 0 plane directly.
 export const CAMERA = { z: 16, fov: 45 };

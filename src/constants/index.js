@@ -37,8 +37,8 @@ const about = {
   ],
 };
 
-// Champagne ramp stops (graphite bronze → ivory), shared by the particle
-// cloud and the pipeline diagrams.
+// Champagne ramp stops (graphite bronze → ivory), shared by the timeline
+// and the pipeline diagrams.
 const ramp = ["#3a3328", "#6b5536", "#8c6a3f", "#c9a96e", "#f4efe4"];
 
 // Capillary internship, from the résumé. No internal data beyond it.

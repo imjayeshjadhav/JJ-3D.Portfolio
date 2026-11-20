@@ -2,13 +2,13 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import gsap from "gsap";
 
 import Navbar from "./components/Navbar";
-import Loader from "./components/Loader";
+import BuildIntro from "./components/BuildIntro";
 import Cursor from "./components/Cursor";
 import Toast from "./components/Toast";
 import CommandPalette from "./components/CommandPalette";
-import store from "./scene/store";
 import SceneBoundary from "./components/SceneBoundary";
 import useSmoothScroll from "./hooks/useSmoothScroll";
+import useSectionBuilds from "./hooks/useSectionBuilds";
 import Hero from "./sections/Hero";
 import Capillary from "./sections/Capillary";
 import Wins from "./sections/Wins";
@@ -34,14 +34,10 @@ const hasWebGL = () => {
 const App = () => {
   const [webgl] = useState(hasWebGL);
   useSmoothScroll();
+  useSectionBuilds();
 
   useEffect(() => {
     document.documentElement.classList.toggle("no-webgl", !webgl);
-    // Without a 3D scene there is nothing to load: start the hero right away.
-    if (!webgl) {
-      store.loaderDone = true;
-      window.dispatchEvent(new Event("scene:ready"));
-    }
   }, [webgl]);
 
   // Magnetic buttons: [data-magnetic] elements lean a few pixels toward the pointer.
@@ -79,7 +75,7 @@ const App = () => {
         Skip to the Capillary work
       </a>
 
-      {webgl && <Loader />}
+      <BuildIntro webgl={webgl} />
       <Cursor />
       <Toast />
       <CommandPalette />

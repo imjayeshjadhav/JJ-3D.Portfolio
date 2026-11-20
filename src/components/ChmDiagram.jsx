@@ -3,14 +3,11 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
-import store from "../scene/store";
 import useMediaQuery from "../hooks/useMediaQuery";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// How Client Health Monitor fits together, from the résumé. The index of
-// each node matches PIPELINE_ANCHORS.capillary, so pointing at a node also
-// lights that part of the particle gauge behind the section.
+// How Client Health Monitor fits together, from the résumé.
 const NODES = [
   { id: "sources", x: 18, y: 40, w: 150, h: 300, title: "Five sources", lines: ["New Relic", "Jira", "ServiceNow", "Databricks", "NPS"], detail: "New Relic, Jira, ServiceNow, Databricks and NPS: five systems that never used to share one view." },
   { id: "python", x: 222, y: 160, w: 120, h: 60, title: "Python jobs", detail: "Python jobs pull each source on a schedule and load it into BigQuery." },
@@ -100,12 +97,8 @@ const ChmGraph = () => {
 
   const point = (i) => () => {
     setActive(i);
-    store.stageSpot = { key: "capillary", index: i };
   };
-  const clear = () => {
-    setActive(null);
-    store.stageSpot = null;
-  };
+  const clear = () => setActive(null);
 
   return (
     <figure ref={scope}>

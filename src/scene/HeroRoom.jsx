@@ -9,7 +9,7 @@ import store, { rectToWorld } from "./store";
 const ROOM_HEIGHT_UNITS = 13.26;
 
 // The room is pinned to #hero-stage, so it scrolls away with the hero like
-// page content while the particle cloud stays behind and changes shape.
+// page content. On first load it waits for the build intro to place it.
 const HeroRoom = () => {
   const anchor = useRef();
   const tilt = useRef();
@@ -26,15 +26,15 @@ const HeroRoom = () => {
 
     const r = el.getBoundingClientRect();
     const { width, height } = state.size;
-    g.visible = r.bottom > -40 && r.top < height;
+    g.visible = store.introProgress > 0.001 && r.bottom > -40 && r.top < height;
     if (!g.visible) return;
 
     const w = rectToWorld(r, width, height);
     // 0 at rest, 1 once the stage has scrolled fully out of view.
     const out = touch.current ? 0 : THREE.MathUtils.clamp(-r.top / r.height, 0, 1);
-    // On load the room grows in and turns to rest while the cloud converges.
+    // Placed by the build intro: grows in with a slight overshoot and turns to rest.
     const settle = store.introProgress;
-    const scale = ((r.height * w.wpp) / ROOM_HEIGHT_UNITS) * (1 - out * 0.3) * (0.85 + 0.15 * settle);
+    const scale = ((r.height * w.wpp) / ROOM_HEIGHT_UNITS) * (1 - out * 0.3) * (0.55 + 0.45 * settle);
     g.position.set(w.x, w.y, 0);
     g.scale.setScalar(scale);
 

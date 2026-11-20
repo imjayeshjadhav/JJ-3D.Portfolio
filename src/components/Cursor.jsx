@@ -10,6 +10,7 @@ const Cursor = () => {
   const ring = useRef(null);
   const dot = useRef(null);
   const label = useRef(null);
+  const you = useRef(null);
 
   useEffect(() => {
     const ok =
@@ -24,6 +25,7 @@ const Cursor = () => {
 
     const onMove = (e) => {
       dot.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      you.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
       ringX(e.clientX);
       ringY(e.clientY);
       root.dataset.cursorVisible = "true";
@@ -39,6 +41,16 @@ const Cursor = () => {
     const onDown = () => ring.current.classList.add("is-pressed");
     const onUp = () => ring.current.classList.remove("is-pressed");
 
+    // While the crew builds the page, the visitor's cursor is tagged "you",
+    // like one more collaborator. The tag lingers a moment after.
+    let hideYou = 0;
+    const building = root.classList.contains("building");
+    you.current.dataset.show = String(building);
+    const onBuilt = () => {
+      hideYou = setTimeout(() => you.current && (you.current.dataset.show = "false"), 1800);
+    };
+    if (building) window.addEventListener("intro:done", onBuilt, { once: true });
+
     window.addEventListener("pointermove", onMove, { passive: true });
     document.addEventListener("pointerover", onOver);
     document.addEventListener("pointerleave", onLeave);
@@ -46,6 +58,8 @@ const Cursor = () => {
     window.addEventListener("pointerup", onUp);
     return () => {
       root.classList.remove("has-cursor");
+      clearTimeout(hideYou);
+      window.removeEventListener("intro:done", onBuilt);
       window.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerover", onOver);
       document.removeEventListener("pointerleave", onLeave);
@@ -60,6 +74,9 @@ const Cursor = () => {
         <span ref={label} className="cursor-label" />
       </div>
       <div ref={dot} className="cursor-dot" />
+      <div ref={you} className="cursor-you" data-show="false">
+        <span>you</span>
+      </div>
     </div>
   );
 };

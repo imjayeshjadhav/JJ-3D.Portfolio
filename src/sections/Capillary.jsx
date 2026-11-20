@@ -24,8 +24,9 @@ const Capillary = () => {
   );
 
   return (
-    <section id="capillary" ref={scope} data-formation="capillary" className="section border-t border-rule/60">
+    <section id="capillary" ref={scope} className="section border-t border-rule/60">
       <div className="shell">
+        <div className="cap-head">
         <div className="flex items-center gap-4">
           <img src="/images/experience/capillary.png" alt="" className="size-10 rounded-lg bg-surface p-1.5" />
           <p className="text-muted">
@@ -36,6 +37,7 @@ const Capillary = () => {
 
         <h2 className="section-title mt-8 max-w-[14ch]">{capillary.project}</h2>
         <p className="mt-6 max-w-[34ch] font-display text-2xl leading-snug text-fg md:text-3xl">{capillary.lead}</p>
+        </div>
 
         <dl className="mt-14 grid grid-cols-2 gap-x-6 gap-y-8 border-y border-rule py-8 lg:grid-cols-4">
           {capillary.metrics.map(({ value, label }) => (
@@ -59,8 +61,8 @@ const Capillary = () => {
           ))}
         </dl>
 
-        <div data-formation="capillary-detail" className="mt-16">
-          <div className="rounded-3xl border border-rule bg-surface/70 p-5 sm:p-8 lg:p-12">
+        <div className="mt-16">
+          <div className="cap-panel rounded-3xl border border-rule bg-surface/70 p-5 sm:p-8 lg:p-12">
             <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
               <h3 className="text-3xl md:text-4xl">How it fits together</h3>
               <p className="text-sm text-muted">Five sources in, one score out, with Claude and Ask CHM on top.</p>
@@ -70,7 +72,7 @@ const Capillary = () => {
             </div>
           </div>
 
-          <div className="mt-16 grid gap-14 lg:grid-cols-2 lg:gap-20">
+          <div className="cap-built mt-16 grid gap-14 lg:grid-cols-2 lg:gap-20">
             <div>
               <h3 className="font-sans text-lg font-semibold tracking-normal text-ivory">What I built</h3>
               <ul className="mt-4 space-y-4 text-muted">

@@ -65,7 +65,7 @@ const TechStack = () => {
   const tool = stackIcons[front];
 
   return (
-    <section id="stack" ref={scope} data-formation="stack" className="section">
+    <section id="stack" ref={scope} className="section">
       <div className="stack-pin flex flex-col justify-center md:min-h-[100svh]">
         <div className="shell">
           <h2 className="section-title">Stack</h2>

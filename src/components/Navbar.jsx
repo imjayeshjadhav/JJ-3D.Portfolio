@@ -65,7 +65,7 @@ const Navbar = () => {
         solid ? "border-b border-rule/70 bg-ink/85 backdrop-blur-md" : "border-b border-transparent"
       }`}
     >
-      <nav className="shell flex h-[var(--nav-h)] items-center justify-between" aria-label="Main">
+      <nav data-build="nav" className="shell flex h-[var(--nav-h)] items-center justify-between" aria-label="Main">
         <a
           href="#top"
           className="font-display text-2xl font-medium tracking-tight text-gold-soft"
@@ -74,7 +74,7 @@ const Navbar = () => {
           JJ
         </a>
 
-        <ul className="hidden items-center gap-8 lg:flex">
+        <ul data-build="links" className="hidden items-center gap-8 lg:flex">
           {navLinks.map(({ name, link }) => (
             <li key={name}>
               <a

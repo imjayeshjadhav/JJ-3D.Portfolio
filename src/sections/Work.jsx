@@ -22,7 +22,7 @@ gsap.registerPlugin(ScrollTrigger);
 const CaseStudy = ({ project, flip }) => (
   <article
     id={`work-${project.id}`}
-    data-formation={`work-${project.id}`}
+   
     aria-labelledby={`work-${project.id}-title`}
     className="case-study grid items-start gap-10 border-t border-rule/60 py-16 md:py-24 lg:grid-cols-12 lg:gap-14"
   >
@@ -30,7 +30,7 @@ const CaseStudy = ({ project, flip }) => (
     <figure
       className={`order-2 lg:sticky lg:top-[calc(var(--nav-h)+2rem)] lg:col-span-7 ${flip ? "lg:order-2" : "lg:order-1"}`}
     >
-      <div className="[perspective:1400px]">
+      <div className="case-frame [perspective:1400px]">
         <div className="case-shot relative overflow-hidden rounded-xl border border-rule bg-ink will-change-transform">
           {project.image ? (
             <a
@@ -59,11 +59,10 @@ const CaseStudy = ({ project, flip }) => (
         </div>
       </div>
       <figcaption className="mt-6">
-        <p className="mb-3 text-sm text-muted">How it works. Point at a stage to see it in the model behind.</p>
+        <p className="mb-3 text-sm text-muted">How it works.</p>
         <PipelineDiagram
           stages={project.pipeline}
           label={`${project.name} pipeline`}
-          formation={`work-${project.id}`}
         />
         <ul className="mt-8 flex flex-wrap gap-2" aria-label="Tech stack">
           {project.stack.map((tech) => (
@@ -107,7 +106,7 @@ const CaseStudy = ({ project, flip }) => (
       </h3>
       <p className="mt-5 text-lg text-fg">{project.summary}</p>
 
-      <div className="mt-8 flex items-end gap-4 border-l-2 border-gold/70 pl-4">
+      <div className="case-metric mt-8 flex items-end gap-4 border-l-2 border-gold/70 pl-4">
         <p
           className="font-display text-7xl font-medium leading-[0.85] tracking-tight text-gold-soft"
           style={{ fontVariationSettings: '"opsz" 144' }}
@@ -199,11 +198,13 @@ const Work = () => {
   return (
     <section id="work" ref={scope} className="section">
       <div className="shell">
-        <h2 className="section-title">Selected work</h2>
-        <p className="section-lede">
-          Beyond Capillary: three systems where the model is only half the job. The other half is
-          making its output something a coordinator, a student or a security analyst can trust.
-        </p>
+        <div className="work-head">
+          <h2 className="section-title">Selected work</h2>
+          <p className="section-lede">
+            Beyond Capillary: three systems where the model is only half the job. The other half is
+            making its output something a coordinator, a student or a security analyst can trust.
+          </p>
+        </div>
         <div className="mt-16">
           {projects.map((project, i) => (
             <CaseStudy key={project.id} project={project} flip={i % 2 === 1} />

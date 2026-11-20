@@ -4,7 +4,6 @@ import { PerformanceMonitor, useProgress } from "@react-three/drei";
 
 import store, { CAMERA } from "./store";
 import HeroRoom from "./HeroRoom";
-import MorphCloud from "./MorphCloud";
 import StackRing from "./StackRing";
 import ContactModel from "./ContactModel";
 import ActivityBars from "./ActivityBars";
@@ -18,7 +17,7 @@ const LoadProgress = () => {
   return null;
 };
 
-// Mounts only after the room and cloud have finished suspending.
+// Mounts only after the room has finished suspending.
 const Ready = () => {
   useEffect(() => {
     store.sceneReady = true;
@@ -48,7 +47,6 @@ const SceneCanvas = () => {
         <PerformanceMonitor onIncline={() => setDpr(1.75)} onDecline={() => setDpr(1)} />
         <Suspense fallback={null}>
           <HeroRoom />
-          <MorphCloud />
           <Ready />
         </Suspense>
         <Suspense fallback={null}>

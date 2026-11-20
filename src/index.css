@@ -5,7 +5,7 @@
   Graphite and champagne. Warm graphite surfaces, ivory text, and one
   champagne-gold accent used sparingly: links, active states, figures.
   The ramp bronze → gold → pale gold → ivory is reserved for things that
-  carry data (the particle cloud, timeline progress, pipeline stages).
+  carry data (timeline progress, pipeline stages).
 */
 @theme {
   --color-ink: #0e0f11;
@@ -147,25 +147,6 @@
   display: inline-block;
 }
 
-/* Labels rendered by drei <Html> inside the hero canvas */
-.cluster-label {
-  @apply cursor-pointer whitespace-nowrap rounded-full border border-rule/80 bg-ink/80 px-3 py-1 text-[0.8rem] font-medium text-fg backdrop-blur-sm transition-colors hover:border-gold hover:text-gold-soft;
-}
-.cluster-label .dot {
-  @apply mr-2 inline-block size-2 rounded-full align-middle;
-}
-
-/* Copy that can sit over the cloud gets a soft halo in the page colour. */
-.case-study p,
-.case-study li,
-.case-study h3,
-.case-study h4,
-#wins p,
-#wins h3,
-.section-lede {
-  text-shadow: 0 0 14px var(--color-ink), 0 0 4px var(--color-ink);
-}
-
 /* DOM stages that turn the 3D model drawn behind them. */
 .drag-stage {
   cursor: grab;
@@ -194,19 +175,6 @@ html.no-webgl .drag-stage {
 .case-shot:hover,
 .case-study:focus-within .case-shot {
   --hover: 1;
-}
-
-/* Labels the cloud wears in some formations (About's constellation). */
-.formation-label {
-  display: inline-block;
-  white-space: nowrap;
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--color-gold-soft);
-  opacity: 0;
-  text-shadow: 0 0 12px var(--color-ink), 0 0 3px var(--color-ink);
-  transition: opacity 200ms linear;
 }
 
 .activity-tooltip {
@@ -299,4 +267,346 @@ html.has-cursor[data-cursor-visible="true"] .cursor-layer {
   font-weight: 600;
   color: var(--color-ink);
   letter-spacing: 0.01em;
+}
+
+/* Visitor's cursor tag during the build intro. */
+.cursor-you {
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+.cursor-you span {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  padding: 3px 7px;
+  border: 1px solid var(--color-gold-soft);
+  border-radius: 2px 7px 7px 7px;
+  background: var(--color-ink);
+  color: var(--color-gold-soft);
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+.cursor-you[data-show="true"] span {
+  opacity: 1;
+}
+
+/*
+  Build intro (BuildIntro.jsx). On a first visit each [data-build] element
+  starts clipped away and a crew of named cursors builds it. The failsafe
+  reveals everything if the script never runs.
+*/
+html.building [data-build] {
+  clip-path: inset(0 100% 100% 0);
+  animation: build-failsafe 0s linear 12s forwards;
+}
+@keyframes build-failsafe {
+  to {
+    clip-path: none;
+  }
+}
+.build-grid {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  opacity: 0;
+  background-image: radial-gradient(circle, rgb(233 228 218 / 0.11) 1px, transparent 1.6px);
+  background-size: 28px 28px;
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, black 30%, transparent 100%);
+}
+.build-root {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+}
+.build-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+/* Section builds draw in one page-tall layer, so cursors scroll with the content. */
+.build-page-layer {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  z-index: 40;
+}
+[data-build-pending] {
+  clip-path: inset(0 100% 100% 0);
+}
+.crew-cursor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  opacity: 0;
+  will-change: transform;
+}
+/* One icon per tool mode; each is offset so its hotspot sits on (0, 0). */
+.crew-icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+  overflow: visible;
+  scale: var(--press, 1);
+  filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.45));
+}
+.crew-icon path {
+  fill: var(--tone);
+  stroke: var(--color-ink);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+.crew-cursor[data-mode="pointer"] [data-icon="pointer"] {
+  display: block;
+  transform-origin: 2px 2px;
+}
+.crew-cursor[data-mode="text"] [data-icon="text"] {
+  display: block;
+  margin: -11px 0 0 -5px;
+}
+.crew-cursor[data-mode="pen"] [data-icon="pen"] {
+  display: block;
+  margin: -19.5px 0 0 -2px;
+  transform-origin: 2px 19.5px;
+}
+.crew-cursor[data-mode="resize"] [data-icon="resize"] {
+  display: block;
+  margin: -7px 0 0 -10px;
+}
+[data-icon="text"] path {
+  fill: none;
+  stroke: var(--tone);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+.crew-tag {
+  position: absolute;
+  left: 13px;
+  top: 19px;
+  padding: 4px 8px;
+  border-radius: 2px 8px 8px 8px;
+  background: var(--tone);
+  color: var(--color-ink);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
+}
+.crew-cursor[data-mode="text"] .crew-tag,
+.crew-cursor[data-mode="resize"] .crew-tag {
+  left: 10px;
+  top: 12px;
+}
+.crew-cursor[data-mode="pen"] .crew-tag {
+  left: 16px;
+  top: 4px;
+}
+.build-box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  border: 1px solid var(--tone);
+  background: color-mix(in srgb, var(--tone) 5%, transparent);
+}
+.build-box i {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -4px 0 0 -4px;
+  border: 1px solid var(--tone);
+  background: var(--color-ink);
+}
+.build-box i[data-h="tr"],
+.build-box i[data-h="br"] {
+  left: 100%;
+}
+.build-box i[data-h="bl"],
+.build-box i[data-h="br"] {
+  top: 100%;
+}
+.build-size {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--tone);
+  color: var(--color-ink);
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+}
+.build-room {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  color: var(--tone);
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-variant-numeric: tabular-nums;
+  font-variation-settings: "opsz" 144;
+  white-space: nowrap;
+}
+.build-box i[data-h="mr"] {
+  left: 100%;
+  top: 50%;
+  width: 9px;
+  height: 18px;
+  margin: -9px 0 0 -5px;
+  border-radius: 3px;
+  background: var(--tone);
+}
+.build-highlight {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--tone) 24%, transparent);
+}
+.build-guide {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  background: var(--tone);
+}
+.build-outline {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+  border: 1.5px solid var(--tone);
+  border-radius: 6px;
+}
+.build-pen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  visibility: hidden;
+}
+.build-pen svg {
+  display: block;
+  overflow: visible;
+}
+.build-pen path {
+  fill: none;
+  stroke: var(--tone);
+  stroke-width: 1.5;
+}
+.build-pen i {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  visibility: hidden;
+  border: 1.5px solid var(--tone);
+  border-radius: 999px;
+  background: var(--color-ink);
+}
+.build-comment {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  visibility: hidden;
+  transform-origin: 0 50%;
+}
+.build-comment b {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px 999px 999px 4px;
+  background: var(--tone);
+  color: var(--color-ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.build-comment span {
+  padding: 6px 10px;
+  border: 1px solid var(--color-rule);
+  border-radius: 10px;
+  background: var(--color-raised);
+  color: var(--color-fg);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+}
+.build-caret {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  visibility: hidden;
+  background: var(--tone);
+}
+.build-pulse {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  visibility: hidden;
+  border: 1.5px solid var(--tone);
+  border-radius: 999px;
+}
+.build-dots {
+  display: flex;
+  padding-left: 3px;
+}
+.build-dots i {
+  width: 10px;
+  height: 10px;
+  margin-left: -3px;
+  border: 1.5px solid var(--color-ink);
+  border-radius: 999px;
+}
+.build-skip {
+  pointer-events: auto;
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 2.5rem;
+  padding: 0 1rem;
+  border: 1px solid var(--color-rule);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-ink) 80%, transparent);
+  color: var(--color-fg);
+  font-size: 0.85rem;
+  transition: border-color 200ms ease, color 200ms ease;
+}
+.build-skip:hover,
+.build-skip:focus-visible {
+  border-color: var(--color-gold);
+  color: var(--color-gold-soft);
+}
+@media (max-width: 767px) {
+  .crew-tag {
+    font-size: 0.68rem;
+    padding: 3px 6px;
+  }
+  
 }
